@@ -64,6 +64,19 @@ const InputContent = styled.textarea`
     &:focus {outline:none;}
 `
 
+const InputTarget = styled.input`
+    width: 100%;
+    color: #404040;
+    font-family: Pretendard;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    border: none;
+    &:focus {outline:none;}
+    margin-bottom: 10px;
+`
+
 const SubmitBox = styled.div`
     margin-top: 16px;
     display: flex;
@@ -92,6 +105,7 @@ const SubmitBtn = styled.div`
 export default function NoticeWrite(props) {
     const navigate = useNavigate()
     const [title, setTitle] = useState(null);
+    const [target, setTarget] = useState(null);
     const [content, setContent] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
@@ -119,13 +133,8 @@ export default function NoticeWrite(props) {
         submitData();
     }
 
-    function submitBoardAll() {
-        const is_secret = confirm("익명으로 하시겠습니까?");
-        submitBoardService('posts', is_secret)
-    }
-
-    function submitBoardPriavte() {
-        submitBoardService('inquires')
+    const submitNotice = () => {
+        submitBoardService('notice')
     }
 
     return (
@@ -136,18 +145,16 @@ export default function NoticeWrite(props) {
                 <FormBox>
                     <InputTitle type="text" placeholder="제목" onChange={(e) => { setTitle(e.target.value) }} />
                     <Line />
+                    <InputTarget placeholder="타겟 ex) 1, 2, 3" onChange={(e) => { setTarget(e.target.value) }} />
                     <InputContent placeholder="내용" onChange={(e) => { setContent(e.target.value) }} />
                 </FormBox>
                 <SubmitBox>
-                    <SubmitBtn $background={"#fff"} $color={"#48BFA2"} onClick={() => { submitBoardAll() }}>
-                        게시판 올리기
-                    </SubmitBtn>
-                    <SubmitBtn $background={"#48BFA2"} $color={"#fff"} onClick={() => { submitBoardPriavte() }}>
-                        1대1 문의하기
+                    <SubmitBtn $background={"#48BFA2"} $color={"#fff"} onClick={submitNotice}>
+                        게시하기
                     </SubmitBtn>
                 </SubmitBox>
             </Main>
-            <Navigation idx={3} />
+            <Navigation idx={1} />
         </Container>
     )
 };

@@ -2,10 +2,11 @@ import styled from "styled-components";
 import Header from "../components/Header"
 import Navigation from "../components/Navigation";
 import ArrowIcon from "../assets/icon/right_outline_arrow.svg?react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GoMyBoardIcon from "../assets/icon/mypage_go_myboard.svg?react"
 import { dateAndDay } from "../services/DateFormat"
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from '../services/UserContext';
 
 const Container = styled.div``;
 
@@ -277,7 +278,9 @@ export default function Mypage() {
     const [stuDetails, setStuDetails] = useState(null);
     const [scoreDetail, setScoreDetail] = useState(false);
     const [meritlogs, setMeritlogs] = useState(null);
+    const { isTeacher, loading } = useContext(UserContext);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
+
     useEffect(() => {
         async function fecthData() {
             const response = await fetch(`${SERVER_URL}/api/profile`, {
@@ -290,7 +293,7 @@ export default function Mypage() {
                 navigate("/")
             }
             console.log(temp);
-            setStuDetails(temp.data.stu_details)
+            if (isTeacher) { setStuDetails(temp.data.stu_details); }
             setData(temp.data);
         }
         fecthData();
@@ -306,7 +309,7 @@ export default function Mypage() {
             console.log(temp);
             setMeritlogs(temp.data);
         }
-        fecthData();
+        if (isTeacher) fecthData();
     }, []);
 
     const logoutHandler = () => {
@@ -325,6 +328,9 @@ export default function Mypage() {
         logout();
     }
 
+    console.log(isTeacher);
+    if (loading) return null; 
+
     return (
         <Container>
             <Header />
@@ -335,15 +341,15 @@ export default function Mypage() {
                     </UserProfile>
                     <UserInfoBox>
                         <UserInfo>
-                            <UserName>{data.name}</UserName>
-                            <UserRoom>{stuDetails.room}호</UserRoom>
+                            <UserName>{isTeacher ? `${data.name } 선생님` : `${data.name}`}</UserName>
+                            { !isTeacher && <UserRoom>{stuDetails.room}호</UserRoom> }
                         </UserInfo>
                         <UserInfo>
-                            <UserSchool>미림마이스터고등학교 {String(stuDetails.stu_num).slice(0, 1)}학년 {String(stuDetails.stu_num).slice(1, 2)}반</UserSchool>
+                            <UserSchool>미림마이스터고등학교 {!isTeacher && `${String(stuDetails.stu_num).slice(0, 1)}학년 ${String(stuDetails.stu_num).slice(1, 2)}반`}</UserSchool>
                         </UserInfo>
                     </UserInfoBox>
                 </UserInfoContainer>
-                <UserScoreBox>
+                { !isTeacher && <UserScoreBox>
                     <PlusMinusScore>
                         <ScoreInnerBox $background="#48BFA2">
                             <InnerBox $justify="start">
@@ -386,8 +392,8 @@ export default function Mypage() {
                             )
                         })}
                     </TotalScoreContainer>
-                </UserScoreBox>
-                <MyBoard>
+                </UserScoreBox> }
+                { !isTeacher && <MyBoard>
                     <GoMyBoardBtn $position='top'>
                         <GoBoardBtnText>내가 쓴 글 보기</GoBoardBtnText>
                         <GoMyBoardIcon />
@@ -396,7 +402,7 @@ export default function Mypage() {
                         <GoBoardBtnText>1대1 문의 내역 확인</GoBoardBtnText>
                         <GoMyBoardIcon />
                     </GoMyBoardBtn>
-                </MyBoard>
+                </MyBoard> }
                 <LogoutBtn onClick={() => confirm("정말 로그아웃 하시겠습니까?") && logoutHandler}>
                     <LogoutBtnText>로그아웃</LogoutBtnText>
                 </LogoutBtn>
