@@ -1,8 +1,9 @@
 import './App.css'
 import { BrowserView, MobileView } from 'react-device-detect'
-import { Route, Routes } from 'react-router-dom'
-import Intro from './pages/Intro'
-import Login from './pages/Login'
+import { Route, Routes, BrowserRouter } from 'react-router-dom'
+import HomeRouter from './routes/HomeRouter'
+import LoginRouter from './routes/LoginRouter'
+import { UserProvider } from './services/UserContext';
 
 function App() {
   return (
@@ -12,8 +13,8 @@ function App() {
       </BrowserView>
       <MobileView>
         <Routes>
-          <Route path="/" element={<Intro/>}/>
-          <Route path="/login" element={<Login/>}/>
+          <Route path='/*' element={<HomeRouter />} />
+          <Route path='/login/*' element={<LoginRouter />} />
         </Routes>
       </MobileView>
     </>
