@@ -166,22 +166,14 @@ export default function QRScan() {
             const { boundingBox, cornerPoints } = detectedCode;
 
             // Draw bounding box
-            ctx.strokeStyle = '#00FF00';
-            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#48BFA2';
+            ctx.lineWidth = 1;
             ctx.strokeRect(
                 boundingBox.x,
                 boundingBox.y,
                 boundingBox.width,
                 boundingBox.height
             );
-
-            // Draw corner points
-            ctx.fillStyle = '#ffffff';
-            cornerPoints.forEach((point) => {
-                ctx.beginPath();
-                ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-                ctx.fill();
-            });
         });
     };
 
@@ -215,7 +207,7 @@ export default function QRScan() {
                     onScan={handleScan}
                     allowMultiple={true}
                     formats={['qr_code']}
-                    scanDelay={1000}
+                    scanDelay={5000}
                     sound={false}
                     components={{
                         tracker: highlightCodeOnCanvas,

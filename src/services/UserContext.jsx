@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
         // 쿠키는 브라우저가 알아서 같이 보냅니다 (proxy 설정 등이 되어있다는 가정)
         // const response = await axios.get(`${SERVER_URL}/api/auth/me`); 
         // console.log(response.data);
-        const response = { data : { role: 'teacher', name : '김사감'}}
+        const response = { data : { role: 'student', name : '김사감'}}
         console.log(response);
         setUser(response.data);
       } catch (error) {
