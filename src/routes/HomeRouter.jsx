@@ -14,7 +14,7 @@ import NoticeWrite from '../pages/NoticeWrite';
 export default function HomeRouter() {
     return (
         <Routes>
-            <Route path='/home' element={<Home />} />
+            <Route path='/' element={<Home />} />
             <Route path='/notice' element={<Notice />} />
             <Route path='/notice/:id' element={<NoticeDetail />} />
             <Route path='/notice/write' element={<NoticeWrite/>}/>

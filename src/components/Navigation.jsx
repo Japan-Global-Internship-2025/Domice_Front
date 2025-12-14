@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
-import { UserContext } from '../services/UserContext'; // 1. Context 불러오기
+import { UserContext } from '../services/UserContext';
 import home from "../assets/icon/home.svg?react";
 import notice from "../assets/icon/notice.svg?react";
 import meal from "../assets/icon/meal.svg?react";
@@ -79,7 +79,7 @@ export default function Navigation(props) {
         : { img: meal, value: "급식정보", idx: 2, link: "/meal" };    // 학생일 때
 
     const list = [
-        { img: home, value: "홈", idx: 0, link: "/home" },
+        { img: home, value: "홈", idx: 0, link: "/" },
         { img: notice, value: "공지", idx: 1, link: "/notice" },
         targetItem, // 여기가 교체되는 부분입니다.
         { img: board, value: "게시판", idx: 3, link: "/board" },
