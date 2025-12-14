@@ -3,10 +3,14 @@ import Header from "../components/Header"
 import Navigation from "../components/Navigation";
 import TodayNotice from "../components/TodayNotice";
 import LeftBoxTitle from "../components/LeftBoxTitle";
-import NewNoticeIcon from "../assets/icon/new_notice.svg?react"
-import { dataAndDayAndTime, isLastNDays } from "../services/DateFormat"
+import NewNoticeIcon from "../assets/icon/new_notice.svg?react";
+import DeleteIcon from "../assets/icon/notice_delete.svg?react";
+import BoardWriteIcon from "../assets/icon/board_write.svg?react";
+import { dataAndDayAndTime, isLastNDays } from "../services/DateFormat";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from '../services/UserContext';
+
 
 const Container = styled.div``;
 
@@ -30,7 +34,7 @@ const NoticeList = styled.div`
     margin-top: 40px;
 `;
 
-const ListContent = styled.div`
+const ListContainer = styled.div`
     margin-top: 20px;
     display: flex;
     width: 100%;
@@ -41,14 +45,14 @@ const ListContent = styled.div`
 
 const ListContentBox = styled.div`
     display: flex;
-    gap: 4px;
     padding: 14px;
-    flex-direction: column;
+    gap: 5px;
     align-items: flex-start;
     align-self: stretch;
     border-radius: 14px;
     background: #FFF;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
+    position: relative;
 `;
 
 const NoticeListBoxTitle = styled.p`
@@ -90,9 +94,27 @@ const NewNoticeIconBox = styled.div`
     margin-left: 4px;
 `;
 
+const NoticeDeleteBtn = styled.div`
+`
+
+const ListContent = styled.div`
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 4px; 
+    flex-grow: 1;
+`;
+
+const BoardWrite = styled.div`
+    right: 24px;
+    bottom: 74px;
+    position: absolute;
+`;
+
 export default function Notice() {
     const navigate = useNavigate();
     const [data, setData] = useState(null);
+    const { isTeacher, loading } = useContext(UserContext);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
     useEffect(() => {
         async function fetchData() {
@@ -106,6 +128,13 @@ export default function Notice() {
         fetchData();
     }, [])
 
+    const handlerNoticeDelete = () => {
+        const check = confirm("정말 삭제하시겠습니까?");
+        if (check) {
+            alert("삭제되었습니다.")
+        }
+    }
+
     return (
         <Container>
             <Header />
@@ -118,30 +147,38 @@ export default function Notice() {
                     <ListTitle>
                         <LeftBoxTitle text={"전체 공지"} />
                     </ListTitle>
-                    <ListContent>
+                    <ListContainer>
                         {data && data.map((item, idx) => {
                             const date = new Date(item.created_at)
                             const str_date = dataAndDayAndTime(date)
                             const isLast3Days = isLastNDays(3, date)
                             return (
-                                <ListContentBox key={idx} onClick={() => { navigate(`/notice/${item.id}`) }}>
-                                    <NoticeListBoxTitle>
-                                        {item.title}
-                                    </NoticeListBoxTitle>
-                                    <NoticeListBoxContent>
-                                        <DetailText>
-                                            {item.target}학년
-                                        </DetailText>
-                                        <DetailText>
-                                            {str_date} · {item.author} 선생님
-                                            {isLast3Days && <NewNoticeIconBox><NewNoticeIcon /></NewNoticeIconBox>}
-                                        </DetailText>
-                                    </NoticeListBoxContent>
+                                <ListContentBox key={idx} >
+                                    <ListContent onClick={() => { navigate(`/notice/${item.id}`) }}>
+                                        <NoticeListBoxTitle>
+                                            {item.title}
+                                        </NoticeListBoxTitle>
+                                        <NoticeListBoxContent>
+                                            <DetailText>
+                                                {item.target}학년
+                                            </DetailText>
+                                            <DetailText>
+                                                {str_date} · {item.author} 선생님
+                                                {isLast3Days && <NewNoticeIconBox><NewNoticeIcon /></NewNoticeIconBox>}
+                                            </DetailText>
+                                        </NoticeListBoxContent>
+                                    </ListContent>
+                                    {isTeacher && <NoticeDeleteBtn onClick={handlerNoticeDelete}>
+                                        <DeleteIcon />
+                                    </NoticeDeleteBtn>}
                                 </ListContentBox>
                             )
                         })}
-                    </ListContent>
+                    </ListContainer>
                 </NoticeList>
+                <BoardWrite onClick={() => { navigate('/board/write') }}>
+                    <BoardWriteIcon />
+                </BoardWrite>
             </Main>
             <Navigation idx={1} />
         </Container>

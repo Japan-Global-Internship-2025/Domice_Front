@@ -129,6 +129,7 @@ const TotalScoreContainer = styled.div`
     align-self: stretch;
     border-radius: 14px;
     background: #FFF;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
 `;
 
 const TotalScoreBox = styled.div`
@@ -189,6 +190,7 @@ const LogoutBtn = styled.div`
     align-self: stretch;
     border-radius: 14px;
     background: #FFF;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
 `
 
 const LogoutBtnText = styled.p`
@@ -272,6 +274,7 @@ const LogBoxDate = styled.p`
 export default function Mypage() {
     const navigate = useNavigate();
     const [data, setData] = useState(null)
+    const [stuDetails, setStuDetails] = useState(null);
     const [scoreDetail, setScoreDetail] = useState(false);
     const [meritlogs, setMeritlogs] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -287,6 +290,7 @@ export default function Mypage() {
                 navigate("/")
             }
             console.log(temp);
+            setStuDetails(temp.data.stu_details)
             setData(temp.data);
         }
         fecthData();
@@ -321,7 +325,6 @@ export default function Mypage() {
         logout();
     }
 
-
     return (
         <Container>
             <Header />
@@ -333,10 +336,10 @@ export default function Mypage() {
                     <UserInfoBox>
                         <UserInfo>
                             <UserName>{data.name}</UserName>
-                            <UserRoom>{data.room}호</UserRoom>
+                            <UserRoom>{stuDetails.room}호</UserRoom>
                         </UserInfo>
                         <UserInfo>
-                            <UserSchool>미림마이스터고등학교 {data.stu_num.slice(0, 1)}학년 {data.stu_num.slice(1, 2)}반</UserSchool>
+                            <UserSchool>미림마이스터고등학교 {String(stuDetails.stu_num).slice(0, 1)}학년 {String(stuDetails.stu_num).slice(1, 2)}반</UserSchool>
                         </UserInfo>
                     </UserInfoBox>
                 </UserInfoContainer>
@@ -347,7 +350,7 @@ export default function Mypage() {
                                 <ScoreBoxText $color="#fff" $size="18">상점</ScoreBoxText>
                             </InnerBox>
                             <InnerBox $justify="end">
-                                <ScoreBoxText $color="#fff" $size="24">{data.plus_score}점</ScoreBoxText>
+                                <ScoreBoxText $color="#fff" $size="24">{stuDetails.plus_score}점</ScoreBoxText>
                             </InnerBox>
                         </ScoreInnerBox>
                         <ScoreInnerBox $background="#fff">
@@ -355,14 +358,14 @@ export default function Mypage() {
                                 <ScoreBoxText $color="#48BFA2" $size="18">벌점</ScoreBoxText>
                             </InnerBox>
                             <InnerBox $justify="end">
-                                <ScoreBoxText $color="#48BFA2" $size="24">{data.minus_score}점</ScoreBoxText>
+                                <ScoreBoxText $color="#48BFA2" $size="24">{stuDetails.minus_score}점</ScoreBoxText>
                             </InnerBox>
                         </ScoreInnerBox>
                     </PlusMinusScore>
                     <TotalScoreContainer onClick={() => { setScoreDetail(!scoreDetail) }}>
                         <TotalScoreBox>
                             <TotalScoreText>
-                                총 상점 {data.plus_score - data.minus_score}점
+                                총 상점 {stuDetails.plus_score - stuDetails.minus_score}점
                             </TotalScoreText>
                             <TotalScoreDatailBtn>
                                 <GoDatailText>{scoreDetail ? '상벌점 내역 숨기기' : '상벌점 내역 보기'}</GoDatailText>

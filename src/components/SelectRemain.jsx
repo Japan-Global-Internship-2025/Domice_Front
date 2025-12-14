@@ -58,7 +58,7 @@ export default function SelectRemain() {
     return (
         <Container>
             <ContainerTitle>
-                <LeftBoxTitle text={"잔류 여부 선택"} />
+                <LeftBoxTitle text={"잔류 여부"} />
                 <ToDetail onClick={() => { setRemainDetail(!remainDetail) }}>
                     <GoDetailText>
                         {remainDetail ? '잔류내역 숨기기' : '잔류내역 보기'}

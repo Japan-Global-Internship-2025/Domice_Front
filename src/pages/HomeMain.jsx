@@ -9,7 +9,6 @@ import TodayMealInfo from "../components/TodayMealInfo";
 import { useContext, useState } from 'react';
 import { UserContext } from '../services/UserContext';
 import { getWeekDates, dateAndDay } from '../services/DateFormat';
-import ReactDOM from 'react-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 
 const Container = styled.div``;
@@ -221,7 +220,6 @@ const QRCodeImg = styled.div`
 export default function HomeMain(props) {
     const navigate = useNavigate();
     const { isTeacher, loading } = useContext(UserContext);
-    const [isQRCodeGenerate, setIsQRCodeGenerate] = useState(false);
     const teacher_name = "김사감";
     const teacher_phone = "010-1234-5678";
 
