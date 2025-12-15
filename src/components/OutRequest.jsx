@@ -106,9 +106,9 @@ const OutRequestBtn = styled.button`
     width: 100%;
     border-radius: 13px;
     border: 1px solid #48BFA2;
-    background: ${(props) => props.toggle ? "#48BFA2" : "#fff"};
+    background: ${(props) => props.$toggle ? "#48BFA2" : "#fff"};
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
-    color: ${(props) => props.toggle ? "#fff" : "#48BFA2"};;
+    color: ${(props) => props.$toggle ? "#fff" : "#48BFA2"};
     text-align: center;
     font-family: Pretendard;
     font-size: 14px;
@@ -315,7 +315,7 @@ export default function OutRequest(props) {
             </OutRequestHistory>
             }
             <OutRequestBox>
-                <OutRequestBtn onClick={outRequestToggle} toggle={outRequestBtn}>
+                <OutRequestBtn onClick={outRequestToggle} $toggle={outRequestBtn}>
                     {outRequestBtn ? "외출일정 취소하기" : "외출일정 신청하기"}
                 </OutRequestBtn>
                 {outRequestBtn &&

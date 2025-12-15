@@ -5,6 +5,7 @@ import LeftBoxTitle from "../components/LeftBoxTitle";
 import SelectRemain from "../components/SelectRemain";
 import CheckInIcon from "../assets/icon/check_in.svg?react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div``;
 
@@ -81,16 +82,23 @@ const CheckInText = styled.p`
 `;
 
 const CheckInIconBox = styled.div`
-
+    svg {
+        path {
+            fill: ${props => props.$isCheckIn ? "#48BFA2" : "#D9D9D9"};
+        }
+    }
 `;
 
 const return_list = {
+    EARLY: '입실 시간이 아닙니다',
     AFTER_SCHOOL: '하교 후 입실 체크 16:00 ~ 16:30',
     AFTER_DINNER: '석식 후 입실 체크 17:20 ~ 18:20',
-    RETURN_8PM: '8시 복귀 후 입실 체크 20:00 ~ 20:30'
+    RETURN_8PM: '8시 복귀 후 입실 체크 20:00 ~ 20:30',
+    LATE: '입실 시간이 아닙니다',
 }
 
 export default function HomeOut(props) {
+    const navigate = useNavigate();
     const [currentDate, setCurrentDate] = useState(new Date());
     const dayOffsets = [-2, -1, 0, 1, 2];
     const [nearbyDate, setNearbyDate] = useState([]);
@@ -120,11 +128,20 @@ export default function HomeOut(props) {
         fetchData();
     }, []);
 
-    // function changeDate(offset) {
-    //     const tempDate = new Date(currentDate);
-    //     tempDate.setDate(currentDate.getDate() + offset);
-    //     setCurrentDate(tempDate);
-    // }
+    const handleCheckInClick = () => {
+        if (selectDayCheckIN) {
+            alert("이미 입실체크가 완료되었습니다."); 
+        }
+        else {
+            navigate("/checkin");
+        }
+    }
+
+    function changeDate(offset) {
+        const tempDate = new Date(currentDate);
+        tempDate.setDate(currentDate.getDate() + offset);
+        setCurrentDate(tempDate);
+    }
 
     return (
         <Container>
@@ -136,8 +153,8 @@ export default function HomeOut(props) {
                         {nearbyDate.map((item, idx) => {
                             const today = item.getMonth() == currentDate.getMonth() && item.getDate() == currentDate.getDate();
                             return (
-                                // <DateBox key={idx} $today={today} onClick={() => { changeDate(dayOffsets[idx]) }}>
-                                <DateBox key={idx} $today={today}>
+                                <DateBox key={idx} $today={today} onClick={() => { changeDate(dayOffsets[idx]) }}>
+                                {/* <DateBox key={idx} $today={today}> */}
                                     <MonthText $today={today}>
                                         {item.getMonth() + 1}월
                                     </MonthText>
@@ -148,14 +165,14 @@ export default function HomeOut(props) {
                             )
                         })}
                     </NearyByDates>
-                    { selectDayCheckIN && <SelectDayCheckIn>
+                    <SelectDayCheckIn onClick={handleCheckInClick}>
                         <CheckInText>
-                            { return_list[selectDayCheckIN.session_type] }
+                            { selectDayCheckIN? return_list[selectDayCheckIN.session_type] : getReturnStatus() }
                         </CheckInText>
-                        <CheckInIconBox>
+                        <CheckInIconBox $isCheckIn={selectDayCheckIN != null}>
                             <CheckInIcon/>
                         </CheckInIconBox>
-                    </SelectDayCheckIn>}
+                    </SelectDayCheckIn>
                 </CheckInBox>
             </CheckInContainer>
             <OutRequest outRequest={props.outRequest} />
@@ -163,4 +180,32 @@ export default function HomeOut(props) {
         </Container >
     )
 }
+
+const getReturnStatus = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const totalMinutes = hour * 60 + minute;
+
+    const TIME_LIMITS = {
+        AFTER_SCHOOL_START: 960, 
+        AFTER_DINNER_START: 990, 
+        AFTER_DINNER_START_ACTUAL: 1040, 
+        RETURN_8PM_START: 1100, 
+        RETURN_8PM_END: 1230,
+        LATE_START: 1230,
+    };
+    
+    if (totalMinutes < TIME_LIMITS.AFTER_SCHOOL_START) {
+        return return_list.EARLY;
+    } else if (totalMinutes < TIME_LIMITS.AFTER_DINNER_START) {
+        return return_list.AFTER_SCHOOL;
+    } else if (totalMinutes < TIME_LIMITS.RETURN_8PM_START) {
+        return return_list.AFTER_DINNER;
+    } else if (totalMinutes < TIME_LIMITS.LATE_START) {
+        return return_list.RETURN_8PM;
+    } else {
+        return return_list.LATE;
+    }
+};
 

@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
         // 쿠키는 브라우저가 알아서 같이 보냅니다 (proxy 설정 등이 되어있다는 가정)
         // const response = await axios.get(`${SERVER_URL}/api/auth/me`); 
         // console.log(response.data);
-        const response = { data : { role: 'teacher', name : '김민재'}}
+        const response = { data : { role: 'teacher', name : '김민재', gender : 0}}; // 임시 데이터
         console.log(response);
         setUser(response.data);
       } catch (error) {
@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, isTeacher: user?.role === 'teacher' }}>
+    <UserContext.Provider value={{ user, loading, isTeacher: user?.role === 'teacher'}}>
       {children}
     </UserContext.Provider>
   );
