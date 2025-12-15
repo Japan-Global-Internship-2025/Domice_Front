@@ -5,6 +5,7 @@ import LeftBoxTitle from "./LeftBoxTitle";
 
 const Container = styled.div`
     margin-top: 40px;
+    margin-bottom: 20px;
 `;
 
 const ContainerTitle = styled.div`

@@ -1,22 +1,23 @@
 import styled from "styled-components";
 import Header from "../components/Header"
 import Navigation from "../components/Navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import HomeMain from "./HomeMain";
 import HomeOut from "./HomeOut";
 import { getMeal } from '../services/Meal'
+import { UserContext } from '../services/UserContext';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100dvh;
 `;
 
 const Main = styled.div`
     flex-grow: 1;
-    overflow-y: auto;
     padding: 0px 24px 60px 24px;
     background-color: #f9f9f9;
+    overflow-y: auto;
 `;
 
 const Nav = styled.div`
@@ -58,21 +59,36 @@ const NavList = [
 ]
 
 export default function Home() {
+    const { isTeacher } = useContext(UserContext);
     const [navMenu, setNavMenu] = useState(0);
     const [mealInfo, setMealInfo] = useState([["로딩중..."], ["로딩중..."], ["로딩중..."]]);
     const [outRequestData, setOutRequestData] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
     useEffect(() => {
-        async function fetchData() {
-            const response = await fetch(`${SERVER_URL}/api/leave`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            const temp = await response.json()
-            console.log(temp);
-            setOutRequestData(temp.data);
+        if (isTeacher) {
+            async function fetchData() {
+                // const response = await fetch(`${SERVER_URL}/api/leave`, {
+                //     method: 'GET',
+                //     credentials: 'include'
+                // })
+                const temp = await response.json()
+                console.log(temp);
+                setOutRequestData(temp.data);
+            }
+            fetchData();
         }
-        fetchData();
+        else {
+            async function fetchData() {
+                const response = await fetch(`${SERVER_URL}/api/leave`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const temp = await response.json()
+                console.log(temp);
+                setOutRequestData(temp.data);
+            }
+            fetchData();
+        }
     }, [])
 
     useEffect(() => {
@@ -114,7 +130,7 @@ export default function Home() {
                 {<SelectMenuLine $left={NavList[navMenu].left} />}
             </Nav>
             <Main>
-                {navMenu == 0 ? <HomeMain meals={mealInfo} /> : <HomeOut outRequest={outRequestData}/>}
+                {navMenu == 0 ? <HomeMain meals={mealInfo} /> : <HomeOut outRequest={outRequestData} />}
             </Main>
             <Navigation idx={0} />
         </Container>

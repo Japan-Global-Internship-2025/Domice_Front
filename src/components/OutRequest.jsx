@@ -232,6 +232,7 @@ const OutRequestSubmitBtn = styled.button`
 export default function OutRequest(props) {
     const data = props.outRequest;
     const today = new Date();
+    const isTeacher = props.isTeacher;
     const [outRequsetDetail, setOutRequestDetail] = useState(false);
     const [outRequestBtn, setOutRequestBtn] = useState(false);
     const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -314,7 +315,7 @@ export default function OutRequest(props) {
                 })}
             </OutRequestHistory>
             }
-            <OutRequestBox>
+            {!isTeacher && <OutRequestBox>
                 <OutRequestBtn onClick={outRequestToggle} $toggle={outRequestBtn}>
                     {outRequestBtn ? "외출일정 취소하기" : "외출일정 신청하기"}
                 </OutRequestBtn>
@@ -350,7 +351,7 @@ export default function OutRequest(props) {
                         </OutRequestContentBox>
                     </OutRequestForm>
                 }
-            </OutRequestBox>
-        </OutRequestContainer>
+            </OutRequestBox> }
+        </OutRequestContainer> 
     )
 }

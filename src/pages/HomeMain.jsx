@@ -265,7 +265,8 @@ export default function HomeMain(props) {
                 </TodayTeacherBox>
             </TodayTeacherContainer>
             {isTeacher
-                ? <QRCodeGenerateContainer>
+                ?
+                <QRCodeGenerateContainer>
                     <QRContainerTitle>
                         <LeftBoxTitle text={"오늘의 QR코드"} />
                     </QRContainerTitle>
@@ -284,8 +285,8 @@ export default function HomeMain(props) {
                                     marginSize={1}
                                     id="qr-code"
                                     size={512}
-                                    bgColor={"#FFFFFF"}   
-                                    style={{ width: '128px', height: '128px' }} 
+                                    bgColor={"#FFFFFF"}
+                                    style={{ width: '128px', height: '128px' }}
                                 />
                             </QRCodeImg>
                             <QRGenerateBtnBox>
@@ -296,7 +297,8 @@ export default function HomeMain(props) {
                         </QRGenerateContent>
                     </QRGenerateBox>
                 </QRCodeGenerateContainer>
-                : <TodayMealsContainer>
+                :
+                <TodayMealsContainer>
                     <MealsTitle>
                         <LeftBoxTitle text={"오늘의 급식"} />
                         <ToDatail onClick={() => { navigate("/meal") }}>

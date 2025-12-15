@@ -7,6 +7,7 @@ import GoMyBoardIcon from "../assets/icon/mypage_go_myboard.svg?react"
 import { dateAndDay } from "../services/DateFormat"
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from '../services/UserContext';
+import { stuNumToGradeANDClass } from "../services/NumberFormat";
 
 const Container = styled.div``;
 
@@ -293,7 +294,7 @@ export default function Mypage() {
                 navigate("/")
             }
             console.log(temp);
-            if (isTeacher) { setStuDetails(temp.data.stu_details); }
+            if (!isTeacher) { setStuDetails(temp.data.stu_details); }
             setData(temp.data);
         }
         fecthData();
@@ -345,7 +346,7 @@ export default function Mypage() {
                             { !isTeacher && <UserRoom>{stuDetails.room}호</UserRoom> }
                         </UserInfo>
                         <UserInfo>
-                            <UserSchool>미림마이스터고등학교 {!isTeacher && `${String(stuDetails.stu_num).slice(0, 1)}학년 ${String(stuDetails.stu_num).slice(1, 2)}반`}</UserSchool>
+                            <UserSchool>미림마이스터고등학교 {!isTeacher && stuNumToGradeANDClass(stuDetails.stu_num)}</UserSchool>
                         </UserInfo>
                     </UserInfoBox>
                 </UserInfoContainer>
