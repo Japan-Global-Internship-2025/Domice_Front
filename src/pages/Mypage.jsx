@@ -328,7 +328,7 @@ export default function Mypage() {
         logout();
     }
 
-    console.log(isTeacher);
+    // console.log(isTeacher);
     if (loading) return null; 
 
     return (
