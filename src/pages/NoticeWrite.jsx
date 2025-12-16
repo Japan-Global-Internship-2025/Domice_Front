@@ -65,19 +65,6 @@ const InputContent = styled.textarea`
     &:focus {outline:none;}
 `
 
-const InputTarget = styled.input`
-    width: 100%;
-    color: #404040;
-    font-family: Pretendard;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    border: none;
-    &:focus {outline:none;}
-    margin-bottom: 10px;
-`
-
 const SubmitBox = styled.div`
     margin-top: 12px;
     display: flex;
@@ -158,7 +145,7 @@ export default function NoticeWrite(props) {
         const data = {
             title: title,
             content: content,
-            target_grades: selectedTargets
+            target_grades: selectedTargets.join(', ')
         }
         if (is_secret) data.is_secret = is_secret;
         console.log(data);

@@ -13,6 +13,7 @@ import BoardWrite from '../pages/BoardWrite';
 import QRScan from '../pages/QRScan';
 import NoticeWrite from '../pages/NoticeWrite';
 import { UserProvider } from '../services/UserContext';
+import NoticeUpdate from '../pages/NoticeUpdate';
 
 export default function HomeRouter() {
     return (
@@ -22,6 +23,7 @@ export default function HomeRouter() {
                 <Route path='/notice' element={<Notice />} />
                 <Route path='/notice/:id' element={<NoticeDetail />} />
                 <Route path='/notice/write' element={<NoticeWrite />} />
+                <Route path='/notice/update/:id' element={<NoticeUpdate/>} />
                 <Route path='/meal' element={<MealInfo />} />
                 <Route path='/board' element={<Board />} />
                 <Route path='/mypage' element={<Mypage />} />

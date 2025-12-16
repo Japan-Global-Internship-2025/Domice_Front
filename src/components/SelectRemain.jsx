@@ -147,6 +147,7 @@ export default function SelectRemain(props) {
     const { isTeacher, user } = useContext(UserContext);
     const [remainDetail, setRemainDetail] = useState(false);
     const [checkedStatus, setCheckedStatus] = useState(0);
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL
     const data = props.data
 
     useState(() => {
@@ -162,7 +163,19 @@ export default function SelectRemain(props) {
             const name = user.name;
             const check = confirm(`${name}님의 잔류 상태를 ${status === 0 ? '잔류' : '외박'}으로 변경하시겠습니까?`);
             if (!check) return;
-            alert('잔류 상태가 변경되었습니다.');
+            async function fecthData(params) {
+                const response = await fetch(`${SERVER_URL}/api/remain`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                if (response.ok) {
+                    alert('잔류 상태가 변경되었습니다.');
+                }
+                else {
+                    alert('처리 과정에서 에러가 발생했습니다.')
+                }
+            }
+            fecthData();
         }
 
     }
@@ -180,7 +193,7 @@ export default function SelectRemain(props) {
                     </GoDetailIcon>
                 </ToDetail>
             </ContainerTitle>
-            { remainDetail && <Content>
+            {remainDetail && <Content>
                 <OutListBox type="remain" item={data}>
                     <SelectRemainBox>
                         <SelectBtn $isSelected={checkedStatus === 0} onClick={() => handleRemain(0)}>
@@ -210,7 +223,7 @@ export default function SelectRemain(props) {
 
                     </RemainListBox>}
                 </OutListBox>
-            </Content> }
+            </Content>}
         </Container>
     );
 };

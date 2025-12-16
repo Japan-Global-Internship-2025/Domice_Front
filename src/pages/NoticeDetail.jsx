@@ -160,7 +160,7 @@ export default function NoticeDetail(props) {
                     </ContentBox>
                 }
                 { isTeacher && 
-                    <EditBtn>
+                    <EditBtn onClick={() => navigate(`/notice/update/${id}`)}>
                         수정하기
                     </EditBtn>
                 }

@@ -338,10 +338,6 @@ export default function HomeOut() {
         setCurrentDate(tempDate);
     }
 
-    useEffect(() => {
-        // console.log(remainData);
-    }, []);
-
     if (!outRequestData || !remainData) {
         return <Container></Container>;
     }
