@@ -14,15 +14,14 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // const response = await axios.get(`${SERVER_URL}/api/auth/me`); 
-        // console.log(response.data);
-        const response = { data : { role: 'teacher', name : '김민재', gender : 0, id: '110920903544055292951', region: 1}}; // 임시 데이터
-        console.log(response);
-        setUser(response.data);
-      } catch (error) { 
+        const response = await axios.get(`${SERVER_URL}/api/auth/me`, {
+          withCredentials: true,
+        });
+        setUser(response.data.data);
+      } catch (error) {
         console.log("로그인 안 된 상태거나 에러 발생");
         navigate('/login');
-        setUser([]);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -30,8 +29,12 @@ export const UserProvider = ({ children }) => {
     fetchUser();
   }, []);
 
+  // if (loading || !user) {
+  //   return null;
+  // }
+
   return (
-    <UserContext.Provider value={{ user, loading, isTeacher: user?.role === 'teacher'}}>
+    <UserContext.Provider value={{ user, loading, isTeacher: user?.role === 'teacher' }}>
       {children}
     </UserContext.Provider>
   );

@@ -402,7 +402,7 @@ export default function HomeOut() {
                 </CheckInBox>
             </CheckInContainer>
             <OutRequest outRequest={outRequestData} isTeacher={isTeacher} />
-            { user.region===1 && <SelectRemain data={remainData} /> }
+            { (isTeacher || user.stu_details?.region===1) && <SelectRemain data={remainData} /> }
         </Container >
     )
 }

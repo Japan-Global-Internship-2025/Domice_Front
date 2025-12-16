@@ -60,6 +60,7 @@ const NavList = [
 
 export default function Home() {
     const { isTeacher, loading } = useContext(UserContext);
+    console.log(isTeacher);
     const [navMenu, setNavMenu] = useState(0);
     const [mealInfo, setMealInfo] = useState([["로딩중..."], ["로딩중..."], ["로딩중..."]]);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL

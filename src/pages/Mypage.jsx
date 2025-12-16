@@ -314,23 +314,25 @@ export default function Mypage() {
     }, []);
 
     const logoutHandler = () => {
-        async function logout() {
-            const response = await fetch(`${SERVER_URL}/api/auth/logout`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            const temp = await response.json()
-            if (response.ok) {
-                navigate('/login')
+        if (confirm("정말 로그아웃하시겠습니까?")) {
+            async function logout() {
+                const response = await fetch(`${SERVER_URL}/api/auth/logout`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const temp = await response.json()
+                if (response.ok) {
+                    navigate('/login')
+                }
+                console.log(temp);
+                setData(temp.data);
             }
-            console.log(temp);
-            setData(temp.data);
+            logout();
         }
-        logout();
     }
 
     // console.log(isTeacher);
-    if (loading) return null; 
+    if (loading) return null;
 
     return (
         <Container>
@@ -342,15 +344,15 @@ export default function Mypage() {
                     </UserProfile>
                     <UserInfoBox>
                         <UserInfo>
-                            <UserName>{isTeacher ? `${data.name } 선생님` : `${data.name}`}</UserName>
-                            { !isTeacher && <UserRoom>{stuDetails.room}호</UserRoom> }
+                            <UserName>{isTeacher ? `${data.name} 선생님` : `${data.name}`}</UserName>
+                            {!isTeacher && <UserRoom>{stuDetails.room}호</UserRoom>}
                         </UserInfo>
                         <UserInfo>
                             <UserSchool>미림마이스터고등학교 {!isTeacher && stuNumToGradeANDClass(stuDetails.stu_num)}</UserSchool>
                         </UserInfo>
                     </UserInfoBox>
                 </UserInfoContainer>
-                { !isTeacher && <UserScoreBox>
+                {!isTeacher && <UserScoreBox>
                     <PlusMinusScore>
                         <ScoreInnerBox $background="#48BFA2">
                             <InnerBox $justify="start">
@@ -393,8 +395,8 @@ export default function Mypage() {
                             )
                         })}
                     </TotalScoreContainer>
-                </UserScoreBox> }
-                { !isTeacher && <MyBoard>
+                </UserScoreBox>}
+                {!isTeacher && <MyBoard>
                     <GoMyBoardBtn $position='top'>
                         <GoBoardBtnText>내가 쓴 글 보기</GoBoardBtnText>
                         <GoMyBoardIcon />
@@ -403,8 +405,8 @@ export default function Mypage() {
                         <GoBoardBtnText>1대1 문의 내역 확인</GoBoardBtnText>
                         <GoMyBoardIcon />
                     </GoMyBoardBtn>
-                </MyBoard> }
-                <LogoutBtn onClick={() => confirm("정말 로그아웃 하시겠습니까?") && logoutHandler}>
+                </MyBoard>}
+                <LogoutBtn onClick={() => logoutHandler()}>
                     <LogoutBtnText>로그아웃</LogoutBtnText>
                 </LogoutBtn>
             </Main>}
