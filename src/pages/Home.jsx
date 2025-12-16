@@ -60,7 +60,7 @@ const NavList = [
 
 export default function Home() {
     const { isTeacher, loading } = useContext(UserContext);
-    console.log(isTeacher);
+    // console.log(isTeacher);
     const [navMenu, setNavMenu] = useState(0);
     const [mealInfo, setMealInfo] = useState([["로딩중..."], ["로딩중..."], ["로딩중..."]]);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
@@ -88,7 +88,6 @@ export default function Home() {
         }
         fetchData();
     }, [])
-    console.log(mealInfo);
 
     if (loading) return null;
 
@@ -106,7 +105,7 @@ export default function Home() {
                 {<SelectMenuLine $left={NavList[navMenu].left} />}
             </Nav>
             <Main>
-                {navMenu == 0 ? <HomeMain meals={mealInfo} /> : <HomeOut/>}
+                {navMenu == 0 ? <HomeMain meals={mealInfo}/> : <HomeOut/>}
             </Main>
             <Navigation idx={0} />
         </Container>

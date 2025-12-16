@@ -74,7 +74,7 @@ export default function Manage() {
         const roomNumber = floor + String(num).padStart(2, '0');
         return roomNumber;
     });
-    console.log(rooms)
+    // console.log(rooms)
 
     // 2. 권한 체크 로직을 useEffect로 이동
     useEffect(() => {

@@ -89,22 +89,37 @@ export function getWeekDates() {
 
 export function getFridayToSundayForWeekOf(referenceDate) {
     const today = new Date(referenceDate);
-    const currentDay = today.getDay(); 
-    const diffToFriday = 5 - currentDay;
-    const diffToSunday = 0 - currentDay;
-
+    
+    const currentDay = today.getDay();
+    let diffToFriday = 5 - currentDay;
+    
     let friday = new Date(today);
     friday.setDate(today.getDate() + diffToFriday);
 
-    let sunday = new Date(today);
-    if (friday.getDay() === 5 && sunday.getDay() === 0) {
-        sunday.setDate(friday.getDate() + 2);
-    } else {
-        sunday.setDate(today.getDate() + diffToSunday);
-    }
+    let sunday = new Date(friday);
+    sunday.setDate(friday.getDate() + 2); 
 
-    const formattedFriday = dateAndDay(friday);
+    const formattedFriday = dateAndDay(friday); 
     const formattedSunday = dateAndDay(sunday);
 
     return `${formattedFriday} ~ ${formattedSunday}`;
 }
+
+export function getThisFriday() {
+    const today = new Date();
+    const currentDay = today.getDay(); 
+    let daysUntilFriday = 5 - currentDay;
+    if (daysUntilFriday < 0) {
+        daysUntilFriday += 7;
+    }
+    today.setDate(today.getDate() + daysUntilFriday);
+    
+    return today;
+}
+
+export const getTodayDateStr = (now = new Date()) => {
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};

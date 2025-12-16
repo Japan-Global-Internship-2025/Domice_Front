@@ -6,7 +6,7 @@ import UserIcon from "../assets/icon/user.svg?react";
 import RightArrowIcon from "../assets/icon/right_outline_arrow.svg?react";
 import LeftBoxTitle from "../components/LeftBoxTitle";
 import TodayMealInfo from "../components/TodayMealInfo";
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../services/UserContext';
 import { getWeekDates, dateAndDay } from '../services/DateFormat';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -223,22 +223,44 @@ const QRCodeImg = styled.div`
 export default function HomeMain(props) {
     const navigate = useNavigate();
     const { isTeacher, loading } = useContext(UserContext);
+    const [qrData, setQrData] = useState();
     const teacher_name = "김사감";
     const teacher_phone = "010-1234-5678";
 
+    const d = new Date();
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const strDate = `${year}-${month}-${day}`;
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL
+
+    useEffect(() => {
+        if (isTeacher) {
+            async function fetchQrData() {
+                const response = await fetch(`${SERVER_URL}/api/roomcheckins/qr`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const result = await response.json()
+                console.log(result);
+                setQrData(result.data.qr_raw_data);
+            }
+            fetchQrData()
+        }
+    }, [])
+
     const downloadQRCode = () => {
-        // 1. canvas 요소를 선택합니다.
         const canvas = document.getElementById('qr-code');
 
         if (!canvas) return;
 
-        // 2. 이미지 URL(base64)을 생성합니다.
+        // 이미지 URL(base64)을 생성합니다.
         const pngUrl = canvas.toDataURL('image/png');
 
-        // 3. 가상의 링크를 생성하여 다운로드를 실행합니다.
+        // 가상의 링크를 생성하여 다운로드를 실행합니다.
         const downloadLink = document.createElement('a');
         downloadLink.href = pngUrl;
-        downloadLink.download = 'qrcode.png'; // 다운로드될 파일명
+        downloadLink.download = `${strDate}_qrcode.png`; // 다운로드될 파일명
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
@@ -283,7 +305,7 @@ export default function HomeMain(props) {
                         <QRGenerateContent>
                             <QRCodeImg>
                                 <QRCodeCanvas
-                                    value={["https://www.naver.com"]}
+                                    value={[`${qrData}`]}
                                     title={"Domice 출석 체크 QR코드"}
                                     marginSize={1}
                                     id="qr-code"

@@ -151,20 +151,13 @@ export default function ManageScore() {
     useEffect(() => {
         async function fetchStudents() {
             try {
-                // const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-                // const response = await fetch(`${SERVER_URL}/rooms/${roomId}/students`, {
-                //     method: 'GET',
-                //     credentials: 'include',
-                // });
-                // const result = await response.json();
-                // const data = result.data;
-
-                const data = [
-                    { id: '110920903544055292951', name: "김민재", stu_num: "2402", region: 0, plus_score: 10, minus_score: 5, profile_img: 'https://lh3.googleusercontent.com/a/ACg8ocKrQj1NJQYFo7WZEkmJsEPL305ciYcU0O_iGgEclsMSTlVdQvec=s96-c' },
-                    { id: '110920903544055292952', name: "김천재", stu_num: "2100", region: 1, plus_score: 5, minus_score: 15, profile_img: null },
-                    { id: '110920903544055292953', name: "김미림", stu_num: "2200", region: 0, plus_score: 20, minus_score: 1, profile_img: null },
-                    { id: '110920903544055292954', name: "김밥", stu_num: "2400", region: 1, plus_score: 0, minus_score: 5, profile_img: null }
-                ]; // 임시 데이터
+                const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+                const response = await fetch(`${SERVER_URL}/api/admin/rooms/${roomId}/students`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                const result = await response.json();
+                const data = result.data;
                 setStudents(data);
             } catch (error) {
                 console.error("Error fetching students:", error);

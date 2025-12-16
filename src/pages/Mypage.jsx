@@ -310,7 +310,7 @@ export default function Mypage() {
             console.log(temp);
             setMeritlogs(temp.data);
         }
-        if (isTeacher) fecthData();
+        if (!isTeacher) fecthData();
     }, []);
 
     const logoutHandler = () => {

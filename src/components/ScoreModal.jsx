@@ -90,9 +90,32 @@ const SubmitBtn = styled.button`
     line-height: 22px; /* 157.143% */
 `;
 
+const ReasonInputWrapper = styled.div`
+    display: flex;
+    margin-top: 20px;
+`;
+
+const ReasonInput = styled.input`
+    color: #404040;
+    font-family: Pretendard;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 22px;
+    width: 95%;
+    border: none;
+
+    &:focus {
+        outline: none;
+    }
+`;
+
+
 export default function ScoreModal({ isOpen, onClose, selectedStudents, type }) {
     const navigation = useNavigate();
     const [score, setScore] = useState(1); // 점수 상태 관리
+    const [reason, setReason] = useState("");
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
     if (!isOpen) return null; // 열리지 않았으면 아무것도 안 그림
 
@@ -106,10 +129,43 @@ export default function ScoreModal({ isOpen, onClose, selectedStudents, type }) 
 
     const handlerSubmit = () => {
         selectedStudents.forEach(element => {
-            console.log(`${element.name}에게 ${score}점 ${type === "plus" ? "상점" : "벌점"} 부여`);
+            const korType = type === "plus" ? "상점" : "벌점"
+            console.log(`${element.name}에게 ${score}점 ${korType} 부여`);
+            async function fetchData() {
+                const payload = {
+                    user_id: element.id,
+                    reason: reason,
+                    score: score,
+                    type: type,
+                }
+                console.log(payload);
+                try {
+                    const response = await fetch(`${SERVER_URL}/api/admin/meritlogs`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    if (response.ok) {
+                        alert(`${korType} 부여 완료!`)
+                    }
+                    else {
+                        alert("실패. 관리자한테 문의하세요");
+                    }
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            }
+            fetchData();
         });
-        console.log(selectedStudents);
         navigation(-1);
+    }
+
+    const handleReason = (e) => {
+        setReason(e.target.value);
     }
 
     return (
@@ -125,10 +181,14 @@ export default function ScoreModal({ isOpen, onClose, selectedStudents, type }) 
                 <ScoreControl>
                     <ScoreValue>{score}점</ScoreValue>
                     <ButtonGroup>
-                        <ScorePlusIcon onClick={() => setScore(score + 1)}/>
-                        <ScoreMinusIcon onClick={() => setScore(Math.max(1, score - 1))}/>
+                        <ScorePlusIcon onClick={() => setScore(score + 1)} />
+                        <ScoreMinusIcon onClick={() => setScore(Math.max(1, score - 1))} />
                     </ButtonGroup>
                 </ScoreControl>
+
+                <ReasonInputWrapper>
+                    <ReasonInput type="text" placeholder="사유 입력(최대 30자)" onChange={handleReason} maxLength={30} value={reason} />
+                </ReasonInputWrapper>
 
                 <SubmitBtn onClick={handlerSubmit}>
                     {type === "plus" ? "상점주기" : "벌점주기"}

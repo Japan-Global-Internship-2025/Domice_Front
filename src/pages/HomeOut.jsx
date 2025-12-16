@@ -201,7 +201,6 @@ export default function HomeOut() {
     const [selectDayCheckIN, setSelectDayCheckIN] = useState()
     const [studentRoomCheckINs, setStudentRoomCheckINs] = useState([])
     const [outRequestData, setOutRequestData] = useState(null);
-    const [remainData, setRemainData] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
     useEffect(() => {
@@ -216,20 +215,12 @@ export default function HomeOut() {
     if (isTeacher) {
         useEffect(() => {
             async function fetchData() {
-                // const response = await fetch(`${SERVER_URL}/api/roomcheckins/all`, {
-                //     method: 'GET',
-                //     credentials: 'include'
-                // })
-                // const result = await response.json()
-                const result = {
-                    data: [
-                        { id: 2, user_id: '110920903544055292951', name: "김민재", profile_img: 'https://lh3.googleusercontent.com/a/ACg8ocKrQj1NJQYFo7WZEkmJsEPL305ciYcU0O_iGgEclsMSTlVdQvec=s96-c', isCheckIn: false, room: '518', stu_num: 2402 },
-                        { id: 3, user_id: '110920903544055292953', name: "김가루", profile_img: null, isCheckIn: false, room: '518', stu_num: 2200 },
-                        { id: 1, user_id: '110920903544055292954', name: "신채은", profile_img: null, isCheckIn: true, room: '517', stu_num: 2100 },
-                        { id: 4, user_id: '110920903544055292952', name: "김미림", profile_img: null, isCheckIn: true, room: '516', stu_num: 2500 },
-                    ]
-                }
-                console.log(result);
+                const response = await fetch(`${SERVER_URL}/api/roomcheckins/today`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const result = await response.json()
+                // console.log(result);
                 setStudentRoomCheckINs(result.data);
             }
             fetchData();
@@ -243,8 +234,8 @@ export default function HomeOut() {
                     credentials: 'include'
                 })
                 const result = await response.json()
-                console.log(result);
-                setSelectDayCheckIN(result.data);
+                // console.log(result);
+                setSelectDayCheckIN(result.data[0]);
             }
             fetchData();
         }, []);
@@ -254,18 +245,12 @@ export default function HomeOut() {
     useEffect(() => {
         if (isTeacher) {
             async function fetchData() {
-                // const response = await fetch(`${SERVER_URL}/api/leave`, {
-                //     method: 'GET',
-                //     credentials: 'include'
-                // })
-                // const temp = await response.json()
-                const temp = {
-                    data: [
-                        { id: 1, user_id: '110920903544055292951', leave_date: '2025-12-04', reason: '병원', is_approved: true, created_at: '2025-12-03', profiles: { name: "김민재", stu_details: { room: 518, stu_num: 2402 } }},
-                        { id: 2, user_id: '110920903544055292952', leave_date: '2025-12-04', reason: '개인사정', is_approved: false, created_at: '2025-12-03', profiles: { name: "김가루", stu_details: { room: 517, stu_num: 2402 }  }}
-                    ]
-                }; // 임시 데이터
-                console.log(temp);
+                const response = await fetch(`${SERVER_URL}/api/leave`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const temp = await response.json()
+                // console.log(temp);
                 setOutRequestData(temp.data);
             }
             fetchData();
@@ -277,55 +262,16 @@ export default function HomeOut() {
                     credentials: 'include'
                 })
                 const temp = await response.json()
-                console.log(temp);
+                // console.log(temp);
                 setOutRequestData(temp.data);
             }
             fetchData();
         }
     }, [isTeacher])
 
-    // 잔류 신청 데이터 불러오기
-    useEffect(() => {
-        if (isTeacher) {
-            async function fetchData() {
-                // const response = await fetch(`${SERVER_URL}/api/leave`, {
-                //     method: 'GET',
-                //     credentials: 'include'
-                // })
-                // const temp = await response.json()
-                const temp = {
-                    data: [
-                        { id: 1, user_id: '110920903544055292951', type: 0, created_at: '2025-12-15', profiles: { name: "김민재", stu_details: { room: 518, stu_num: 2402 } }},
-                        { id: 2, user_id: '110920903544055292952', type: 1, created_at: '2025-12-15', profiles: { name: "김가루", stu_details: { room: 517, stu_num: 2402 }  }}
-                    ]
-                }; // 임시 데이터
-                console.log(temp);
-                setRemainData(temp.data);
-            }
-            fetchData();
-        }
-        else {
-            async function fetchData() {
-                // const response = await fetch(`${SERVER_URL}/api/leave`, {
-                //     method: 'GET',
-                //     credentials: 'include'
-                // })
-                // const temp = await response.json()
-                const temp = {
-                    data: [
-                        { id: 1, user_id: '110920903544055292951', type: 0, profiles: { name: "김민재" }},
-                    ]
-                }; // 임시 데이터
-                console.log(temp);
-                setRemainData(temp.data);
-            }
-            fetchData();
-        }
-    }, [isTeacher]);
-
     const handleCheckInClick = () => {
         if (selectDayCheckIN.length != 0) {
-            alert("이미 입실체크가 완료되었습니다.");
+            alert(`이미 입실체크가 완료되었습니다.\n입실 일자 : ${selectDayCheckIN.check_date}\n입실 시간 : ${selectDayCheckIN.check_time}`);
         }
         else {
             navigate("/checkin");
@@ -338,7 +284,7 @@ export default function HomeOut() {
         setCurrentDate(tempDate);
     }
 
-    if (!outRequestData || !remainData) {
+    if (!outRequestData) {
         return <Container></Container>;
     }
 
@@ -366,7 +312,7 @@ export default function HomeOut() {
                     </NearyByDates>
                     {!isTeacher
                         ?
-                        <SelectDayCheckIn onClick={handleCheckInClick}>
+                        selectDayCheckIN && <SelectDayCheckIn onClick={handleCheckInClick}>
                             <CheckInText>
                                 {selectDayCheckIN.length == 0 ? getReturnStatus() : return_list[selectDayCheckIN.check_type] }
                             </CheckInText>
@@ -379,15 +325,15 @@ export default function HomeOut() {
                             {studentRoomCheckINs.map((item, idx) => (
                                 <StudentCheckInBox key={idx}>
                                     <StudentProfileImgBox>
-                                        <StudentProfileImg src={item.profile_img} />
+                                        <StudentProfileImg src={item.profiles.profile_img} />
                                     </StudentProfileImgBox>
                                     <StudentInfoBox>
                                         <StduentInfoRow>
-                                            <StudentName>{item.name}</StudentName>
-                                            <StudentRoom>{item.room}호</StudentRoom>
+                                            <StudentName>{item.profiles.name}</StudentName>
+                                            <StudentRoom>{item.profiles.stu_details.room}호</StudentRoom>
                                         </StduentInfoRow>
                                         <StduentInfoRow>
-                                            <StudentNumber>미림마이스터고등학교 {stuNumToGradeANDClass(item.stu_num)}</StudentNumber>
+                                            <StudentNumber>미림마이스터고등학교 {stuNumToGradeANDClass(item.profiles.stu_details.stu_num)}</StudentNumber>
                                         </StduentInfoRow>
                                     </StudentInfoBox>
                                     <StudentCheckInStatusBox>
@@ -402,7 +348,7 @@ export default function HomeOut() {
                 </CheckInBox>
             </CheckInContainer>
             <OutRequest outRequest={outRequestData} isTeacher={isTeacher} />
-            { (isTeacher || user.stu_details?.region===1) && <SelectRemain data={remainData} /> }
+            { (isTeacher || user.stu_details?.region===1) && <SelectRemain /> }
         </Container >
     )
 }

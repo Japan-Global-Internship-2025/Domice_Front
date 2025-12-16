@@ -1,10 +1,11 @@
 import styled from "styled-components";
-import { useState, useContext, use } from "react";
+import { useState, useContext, use, useEffect } from "react";
 import ArrowIcon from "../assets/icon/right_outline_arrow.svg?react";
 import LeftBoxTitle from "./LeftBoxTitle";
 import { UserContext } from '../services/UserContext';
 import OutListBox from "./OutListBox";
 import { stuNumToGradeANDClass } from '../services/NumberFormat';
+import { getThisFriday, getTodayDateStr } from "../services/DateFormat";
 
 const Container = styled.div`
     margin-top: 40px;
@@ -143,30 +144,66 @@ const StudentNumber = styled.p`
     line-height: 16.962px; /* 183.333% */
 `;
 
-export default function SelectRemain(props) {
+export default function SelectRemain() {
     const { isTeacher, user } = useContext(UserContext);
     const [remainDetail, setRemainDetail] = useState(false);
-    const [checkedStatus, setCheckedStatus] = useState(0);
+    const [checkedStatus, setCheckedStatus] = useState(-1);
+    const [data, setData] = useState();
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
-    const data = props.data
 
-    useState(() => {
-        if (data.type != null) {
-            setCheckedStatus(data.type);
+    const statusList = ['STAY', 'OUT']
+
+    useEffect(() => {
+        if (isTeacher) {
+            async function fetchData() {
+                const response = await fetch(`${SERVER_URL}/api/stay?data=${getTodayDateStr(getThisFriday())}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const result = await response.json()
+                if (response.ok) {
+                    console.log(result);
+                    setData(result.data);
+                }
+                setCheckedStatus(0)
+            }
+            fetchData();
         }
-    }, [data]);
+        else {
+            async function fetchData() {
+                const response = await fetch(`${SERVER_URL}/api/stay?data=${getTodayDateStr(getThisFriday())}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const result = await response.json()
+                if (result) {
+                    console.log(result);
+                    setCheckedStatus(result.data[0].status == 'STAY' ? 0 : 1);
+                }
+            }
+            fetchData();
+        }
+    }, [])
 
     const handleRemain = (status) => {
         setCheckedStatus(status)
         if (!isTeacher) {
-            const id = user.id;
-            const name = user.name;
-            const check = confirm(`${name}님의 잔류 상태를 ${status === 0 ? '잔류' : '외박'}으로 변경하시겠습니까?`);
+            const today = new Date();
+            const currentDay = today.getDay();
+            if (currentDay == 0 || currentDay == 6) {
+                alert("주말 선택은 불가능합니다.");
+                return;
+            }
+            const check = confirm(`잔류 상태를 ${status === 0 ? '잔류' : '외박'}으로 변경하시겠습니까?`);
             if (!check) return;
-            async function fecthData(params) {
-                const response = await fetch(`${SERVER_URL}/api/remain`, {
-                    method: 'GET',
-                    credentials: 'include'
+            async function fecthData() {
+                const response = await fetch(`${SERVER_URL}/api/stay`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: status ? 'OUT' : 'STAY' })
                 })
                 if (response.ok) {
                     alert('잔류 상태가 변경되었습니다.');
@@ -194,7 +231,7 @@ export default function SelectRemain(props) {
                 </ToDetail>
             </ContainerTitle>
             {remainDetail && <Content>
-                <OutListBox type="remain" item={data}>
+                <OutListBox type="remain" >
                     <SelectRemainBox>
                         <SelectBtn $isSelected={checkedStatus === 0} onClick={() => handleRemain(0)}>
                             잔류
@@ -204,7 +241,7 @@ export default function SelectRemain(props) {
                         </SelectBtn>
                     </SelectRemainBox>
                     {isTeacher && <RemainListBox>
-                        {(data.filter(element => element.type === checkedStatus)).map((item, idx) => (
+                        {(data.filter(element => element.status === statusList[checkedStatus])).map((item, idx) => (
                             <StudentRemainBox key={idx}>
                                 <StudentProfileImgBox>
                                     <StudentProfileImg src={item.profiles.profile_img} />
