@@ -291,7 +291,7 @@ export default function Mypage() {
             const temp = await response.json()
             if (!response.ok) {
                 alert("로그인이 필요합니다.")
-                navigate("/")
+                navigate("/login")
             }
             console.log(temp);
             if (!isTeacher) { setStuDetails(temp.data.stu_details); }
@@ -321,7 +321,7 @@ export default function Mypage() {
             })
             const temp = await response.json()
             if (response.ok) {
-                navigate('/')
+                navigate('/login')
             }
             console.log(temp);
             setData(temp.data);
