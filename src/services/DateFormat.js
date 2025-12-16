@@ -86,3 +86,25 @@ export function getWeekDates() {
     }
     return [weekDates];
 }
+
+export function getFridayToSundayForWeekOf(referenceDate) {
+    const today = new Date(referenceDate);
+    const currentDay = today.getDay(); 
+    const diffToFriday = 5 - currentDay;
+    const diffToSunday = 0 - currentDay;
+
+    let friday = new Date(today);
+    friday.setDate(today.getDate() + diffToFriday);
+
+    let sunday = new Date(today);
+    if (friday.getDay() === 5 && sunday.getDay() === 0) {
+        sunday.setDate(friday.getDate() + 2);
+    } else {
+        sunday.setDate(today.getDate() + diffToSunday);
+    }
+
+    const formattedFriday = dateAndDay(friday);
+    const formattedSunday = dateAndDay(sunday);
+
+    return `${formattedFriday} ~ ${formattedSunday}`;
+}

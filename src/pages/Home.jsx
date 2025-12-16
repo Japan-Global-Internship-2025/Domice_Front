@@ -59,37 +59,10 @@ const NavList = [
 ]
 
 export default function Home() {
-    const { isTeacher } = useContext(UserContext);
+    const { isTeacher, loading } = useContext(UserContext);
     const [navMenu, setNavMenu] = useState(0);
     const [mealInfo, setMealInfo] = useState([["로딩중..."], ["로딩중..."], ["로딩중..."]]);
-    const [outRequestData, setOutRequestData] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
-    useEffect(() => {
-        if (isTeacher) {
-            async function fetchData() {
-                // const response = await fetch(`${SERVER_URL}/api/leave`, {
-                //     method: 'GET',
-                //     credentials: 'include'
-                // })
-                const temp = await response.json()
-                console.log(temp);
-                setOutRequestData(temp.data);
-            }
-            fetchData();
-        }
-        else {
-            async function fetchData() {
-                const response = await fetch(`${SERVER_URL}/api/leave`, {
-                    method: 'GET',
-                    credentials: 'include'
-                })
-                const temp = await response.json()
-                console.log(temp);
-                setOutRequestData(temp.data);
-            }
-            fetchData();
-        }
-    }, [])
 
     useEffect(() => {
         async function fetchData() {
@@ -116,6 +89,8 @@ export default function Home() {
     }, [])
     console.log(mealInfo);
 
+    if (loading) return null;
+
     return (
         <Container>
             <Header />
@@ -130,7 +105,7 @@ export default function Home() {
                 {<SelectMenuLine $left={NavList[navMenu].left} />}
             </Nav>
             <Main>
-                {navMenu == 0 ? <HomeMain meals={mealInfo} /> : <HomeOut outRequest={outRequestData} />}
+                {navMenu == 0 ? <HomeMain meals={mealInfo} /> : <HomeOut/>}
             </Main>
             <Navigation idx={0} />
         </Container>

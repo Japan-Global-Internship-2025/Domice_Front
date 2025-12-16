@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import Header from "../components/Header"
 import Navigation from "../components/Navigation";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import BoardInNav from "../components/BoardInNav";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from '../services/UserContext';  
 
 const Container = styled.div`
     height: 100dvh; 
@@ -146,6 +147,7 @@ const TargetBtn = styled.button`
 
 export default function NoticeWrite(props) {
     const navigate = useNavigate()
+    const {isTeacher} = useContext(UserContext);
     const [title, setTitle] = useState(null);
     const [selectedTargets, setSelectedTargets] = useState([1, 2, 3]);
     const [content, setContent] = useState(null);
@@ -190,6 +192,14 @@ export default function NoticeWrite(props) {
             setSelectedTargets([...selectedTargets, grade]);
         }
     };
+
+    useEffect(() => {
+        if (!isTeacher) {
+            alert("공지사항 작성 권한이 없습니다.");
+            navigate(-1);
+            return null;
+        }
+    }, [isTeacher, navigate]);
 
     return (
         <Container>

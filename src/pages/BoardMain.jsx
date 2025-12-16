@@ -36,7 +36,7 @@ export default function BoardMain() {
                 method: 'GET'
             })
             const temp = await response.json()
-            console.log(temp);
+            // console.log(temp);
             setData(temp.data);
         }
         fetchData();

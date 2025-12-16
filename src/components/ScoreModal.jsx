@@ -105,7 +105,9 @@ export default function ScoreModal({ isOpen, onClose, selectedStudents, type }) 
     };
 
     const handlerSubmit = () => {
-        alert(`${getDisplayName()}에게 ${score}점 부여 완료!`);
+        selectedStudents.forEach(element => {
+            console.log(`${element.name}에게 ${score}점 ${type === "plus" ? "상점" : "벌점"} 부여`);
+        });
         console.log(selectedStudents);
         navigation(-1);
     }

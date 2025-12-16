@@ -155,6 +155,9 @@ const QRGenerateBox = styled.div`
     background: #FFF;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
     padding: 18px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 `;
 
 const QRGenerateBoxTitle = styled.div`

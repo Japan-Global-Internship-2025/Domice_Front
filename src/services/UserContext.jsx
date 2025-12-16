@@ -5,24 +5,23 @@ import axios from 'axios';
 export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // 유저 정보 담을 곳
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 중인지 확인
   const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // 쿠키는 브라우저가 알아서 같이 보냅니다 (proxy 설정 등이 되어있다는 가정)
         // const response = await axios.get(`${SERVER_URL}/api/auth/me`); 
         // console.log(response.data);
-        const response = { data : { role: 'student', name : '김민재', gender : 0}}; // 임시 데이터
+        const response = { data : { role: 'teacher', name : '김민재', gender : 0, id: '110920903544055292951', region: 1}}; // 임시 데이터
         console.log(response);
         setUser(response.data);
-      } catch (error) {
+      } catch (error) { 
         console.log("로그인 안 된 상태거나 에러 발생");
         setUser([]);
       } finally {
-        setLoading(false); // 로딩 끝
+        setLoading(false);
       }
     };
 

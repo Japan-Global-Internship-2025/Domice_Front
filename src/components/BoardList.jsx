@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import styled from "styled-components";
 import DownArrowIcon from "../assets/icon/down_outline_arrow.svg?react";
 import { useNavigate } from "react-router-dom";
 import BoardContentInfo from "./BoardContentInfo";
-import BoardWriteIcon from "../assets/icon/board_write.svg?react";
+import { UserContext } from '../services/UserContext';
+import DeleteIcon from "../assets/icon/notice_delete.svg?react";
 
 const Container = styled.div`
     position: relative;
@@ -19,7 +20,7 @@ const OrderByBox = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    position: relative; /* 자식 absolute 배치를 위한 기준점 */
+    position: relative;
     width: fit-content;
 `
 
@@ -38,8 +39,8 @@ const OrderByIcon = styled.div`
 
 const InvisibleSelect = styled.select`
   position: absolute;
-  top: 0;
-  left: 0;
+  bottom: 0;
+  right: 0;
   width: 100%;  /* 부모 div와 크기를 똑같이 맞춤 */
   height: 100%;
   opacity: 0;   /* 투명하게 만들어서 안 보이게 함 */
@@ -58,9 +59,8 @@ const ContentList = styled.div`
 const ContentBox = styled.div`
     display: flex;
     padding: 10px 14px;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     align-self: stretch;
     border-radius: 14px;
@@ -69,6 +69,7 @@ const ContentBox = styled.div`
 `;
 
 const ContentInnerBox = styled.div`
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -108,11 +109,23 @@ const ContentBoxInfo = styled.div`
     align-self: stretch;
 `;
 
+const BoardDeleteBtn = styled.div`
+`
+
 const orderby_text = ['최신순 보기', '오래된순 보기']
 export default function BoardList(props) {
     const [orderby, setOrderby] = useState(0)
     const navigate = useNavigate();
     const type = props.type;
+    const { isTeacher, user } = useContext(UserContext);
+    const data = props.data;
+
+    const handlerBoardDelete = (id) => {
+        const check = confirm(`${id}번\n정말 삭제하시겠습니까?`);
+        if (check) {
+            alert("삭제되었습니다.")
+        }
+    }
 
     return (
         <Container>
@@ -131,8 +144,8 @@ export default function BoardList(props) {
                 </OrderByBox>
             </OrderByWrapper>
             <ContentList>
-                {props.data && props.data.map((item, idx) => {
-                    console.log(item);
+                {data && data.map((item, idx) => {
+                    // console.log(item);
                     const content = item.content;
                     let author_name;
                     if (type == "private") {
@@ -142,8 +155,8 @@ export default function BoardList(props) {
                         author_name = item.is_secret ? '익명' : item.profiles.name;
                     }
                     return (
-                        <ContentBox key={idx} onClick={() => { navigate(`/board/${props.type}/${item.id}`) }}>
-                            <ContentInnerBox>
+                        <ContentBox key={idx} >
+                            <ContentInnerBox onClick={() => { navigate(`/board/${props.type}/${item.id}`) }}>
                                 <ContentTexts>
                                     <ContentTitle>
                                         {item.title}
@@ -153,9 +166,12 @@ export default function BoardList(props) {
                                     </ContentPreview>
                                 </ContentTexts>
                                 <ContentBoxInfo>
-                                    <BoardContentInfo info1={item.created_at} info2={author_name}/>
+                                    <BoardContentInfo info1={item.created_at} info2={author_name} />
                                 </ContentBoxInfo>
                             </ContentInnerBox>
+                            {(isTeacher || user?.id === item.user_id) && <BoardDeleteBtn onClick={() => handlerBoardDelete(item.id)}>
+                                <DeleteIcon />
+                            </BoardDeleteBtn>}
                         </ContentBox>
                     )
                 })}

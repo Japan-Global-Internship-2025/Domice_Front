@@ -192,14 +192,16 @@ const return_list = {
     LATE: '입실 시간이 아닙니다',
 }
 
-export default function HomeOut(props) {
-    const { isTeacher } = useContext(UserContext);
+export default function HomeOut() {
+    const { isTeacher, user } = useContext(UserContext);
     const navigate = useNavigate();
     const [currentDate, setCurrentDate] = useState(new Date());
     const dayOffsets = [-2, -1, 0, 1, 2];
     const [nearbyDate, setNearbyDate] = useState([]);
     const [selectDayCheckIN, setSelectDayCheckIN] = useState()
     const [studentRoomCheckINs, setStudentRoomCheckINs] = useState([])
+    const [outRequestData, setOutRequestData] = useState(null);
+    const [remainData, setRemainData] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
     useEffect(() => {
@@ -210,7 +212,7 @@ export default function HomeOut(props) {
         });
         setNearbyDate(calculatedDates);
     }, [currentDate])
-    // console.log(nearbyDate);
+
     if (isTeacher) {
         useEffect(() => {
             async function fetchData() {
@@ -248,6 +250,79 @@ export default function HomeOut(props) {
         }, []);
     }
 
+    // 출입 신청 데이터 불러오기
+    useEffect(() => {
+        if (isTeacher) {
+            async function fetchData() {
+                // const response = await fetch(`${SERVER_URL}/api/leave`, {
+                //     method: 'GET',
+                //     credentials: 'include'
+                // })
+                // const temp = await response.json()
+                const temp = {
+                    data: [
+                        { id: 1, user_id: '110920903544055292951', leave_date: '2025-12-04', reason: '병원', is_approved: true, created_at: '2025-12-03', profiles: { name: "김민재", stu_details: { room: 518, stu_num: 2402 } }},
+                        { id: 2, user_id: '110920903544055292952', leave_date: '2025-12-04', reason: '개인사정', is_approved: false, created_at: '2025-12-03', profiles: { name: "김가루", stu_details: { room: 517, stu_num: 2402 }  }}
+                    ]
+                }; // 임시 데이터
+                console.log(temp);
+                setOutRequestData(temp.data);
+            }
+            fetchData();
+        }
+        else {
+            async function fetchData() {
+                const response = await fetch(`${SERVER_URL}/api/leave`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const temp = await response.json()
+                console.log(temp);
+                setOutRequestData(temp.data);
+            }
+            fetchData();
+        }
+    }, [isTeacher])
+
+    // 잔류 신청 데이터 불러오기
+    useEffect(() => {
+        if (isTeacher) {
+            async function fetchData() {
+                // const response = await fetch(`${SERVER_URL}/api/leave`, {
+                //     method: 'GET',
+                //     credentials: 'include'
+                // })
+                // const temp = await response.json()
+                const temp = {
+                    data: [
+                        { id: 1, user_id: '110920903544055292951', type: 0, created_at: '2025-12-15', profiles: { name: "김민재", stu_details: { room: 518, stu_num: 2402 } }},
+                        { id: 2, user_id: '110920903544055292952', type: 1, created_at: '2025-12-15', profiles: { name: "김가루", stu_details: { room: 517, stu_num: 2402 }  }}
+                    ]
+                }; // 임시 데이터
+                console.log(temp);
+                setRemainData(temp.data);
+            }
+            fetchData();
+        }
+        else {
+            async function fetchData() {
+                // const response = await fetch(`${SERVER_URL}/api/leave`, {
+                //     method: 'GET',
+                //     credentials: 'include'
+                // })
+                // const temp = await response.json()
+                const temp = {
+                    data: [
+                        { id: 1, user_id: '110920903544055292951', type: 0, profiles: { name: "김민재" }},
+                    ]
+                }; // 임시 데이터
+                console.log(temp);
+                setRemainData(temp.data);
+            }
+            fetchData();
+        }
+    }, [isTeacher]);
+
     const handleCheckInClick = () => {
         if (selectDayCheckIN) {
             alert("이미 입실체크가 완료되었습니다.");
@@ -261,6 +336,14 @@ export default function HomeOut(props) {
         const tempDate = new Date(currentDate);
         tempDate.setDate(currentDate.getDate() + offset);
         setCurrentDate(tempDate);
+    }
+
+    useEffect(() => {
+        // console.log(remainData);
+    }, []);
+
+    if (!outRequestData || !remainData) {
+        return <Container></Container>;
     }
 
     return (
@@ -322,8 +405,8 @@ export default function HomeOut(props) {
                     }
                 </CheckInBox>
             </CheckInContainer>
-            <OutRequest outRequest={props.outRequest} isTeacher={isTeacher} />
-            <SelectRemain />
+            <OutRequest outRequest={outRequestData} isTeacher={isTeacher} />
+            { user.region===1 && <SelectRemain data={remainData} /> }
         </Container >
     )
 }

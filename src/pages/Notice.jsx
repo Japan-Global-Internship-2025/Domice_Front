@@ -176,9 +176,9 @@ export default function Notice() {
                         })}
                     </ListContainer>
                 </NoticeList>
-                <BoardWrite onClick={() => { navigate('/notice/write') }}>
+                { isTeacher && <BoardWrite onClick={() => { navigate('/notice/write') }}>
                     <BoardWriteIcon />
-                </BoardWrite>
+                </BoardWrite>}
             </Main>
             <Navigation idx={1} />
         </Container>

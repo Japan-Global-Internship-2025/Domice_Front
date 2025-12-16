@@ -1,14 +1,16 @@
 import styled from "styled-components";
 import { useState, useEffect, use } from "react";
 import ArrowIcon from "../assets/icon/right_outline_arrow.svg?react";
-import OutRequestContent from "./OutRequestList";
+import OutListContent from "./OutListContent";
 import LeftBoxTitle from "./LeftBoxTitle";
 import { dateAndDay, generateCalendar } from "../services/DateFormat"
 import Calendar from "./Calendar";
+import OutListBox from "./OutListBox";
 
 const OutRequestContainer = styled.div`
     width: 100%;
     margin-top: 45px;
+    overflow-x: hidden;
 `;
 
 const OutRequsetTitle = styled.div`
@@ -58,43 +60,6 @@ const OutRequestHistory = styled.div`
     flex-direction: column;
     gap: 12px; 
     margin-bottom: 12px;
-`;
-
-const OutRequestList = styled.div`
-    display: flex;
-    padding: 24px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    align-self: stretch;
-    border-radius: 24px;
-    background: #FFF;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
-`;
-
-const OutRequestListTitle = styled.div`
-    display: flex;
-    gap: 7px;
-    align-self: stretch;
-    height: fit-content;
-`;
-
-const TitleLine = styled.div`
-    width: 3px;
-    border-radius: 1.5px;
-    background: #404040;
-`;
-
-const TitleDate = styled.p`
-    color: #404040;
-    font-family: Pretendard;
-    font-size: 17px;
-    font-weight: 600;
-    line-height: 22px;
-`
-
-const TitleBox = styled.div`
-    
 `;
 
 const OutRequestBox = styled.div`
@@ -287,7 +252,7 @@ export default function OutRequest(props) {
     return (
         <OutRequestContainer>
             <OutRequsetTitle>
-                <LeftBoxTitle text={"외출신청"} />
+                <LeftBoxTitle text={isTeacher ? "외출신청 내역" :"외출신청"} />
                 <ToDetail onClick={() => { setOutRequestDetail(!outRequsetDetail) }}>
                     <GoDetailText>
                         {outRequsetDetail ? '외출내역 숨기기' : '외출내역 보기'}
@@ -298,19 +263,12 @@ export default function OutRequest(props) {
                 </ToDetail>
             </OutRequsetTitle>
             {outRequsetDetail && <OutRequestHistory>
-                {data.map((item, idx) => {
-                    const str_date1 = dateAndDay(new Date(item.created_at))
-                    const str_date2 = dateAndDay(new Date(item.leave_date));
+                {data.map((item) => {
+                    const str_date = dateAndDay(new Date(item.leave_date));
                     return (
-                        <OutRequestList key={idx}>
-                            <OutRequestListTitle>
-                                <TitleLine />
-                                <TitleBox>
-                                    <TitleDate>{str_date1}</TitleDate>
-                                </TitleBox>
-                            </OutRequestListTitle>
-                            <OutRequestContent date={str_date2} reason={item.reason} ok={item.is_approved} />
-                        </OutRequestList>
+                        <OutListBox key={item.id} item={item} user_id={item.user_id}>
+                            <OutListContent date={str_date} reason={item.reason} ok={item.is_approved} isTeacher={isTeacher} user_id={item.user_id} />
+                        </OutListBox>
                     )
                 })}
             </OutRequestHistory>
