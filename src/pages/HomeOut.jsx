@@ -324,7 +324,7 @@ export default function HomeOut() {
     }, [isTeacher]);
 
     const handleCheckInClick = () => {
-        if (selectDayCheckIN) {
+        if (selectDayCheckIN.length != 0) {
             alert("이미 입실체크가 완료되었습니다.");
         }
         else {
@@ -368,9 +368,9 @@ export default function HomeOut() {
                         ?
                         <SelectDayCheckIn onClick={handleCheckInClick}>
                             <CheckInText>
-                                {selectDayCheckIN ? return_list[selectDayCheckIN.session_type] : getReturnStatus()}
+                                {selectDayCheckIN.length == 0 ? getReturnStatus() : return_list[selectDayCheckIN.check_type] }
                             </CheckInText>
-                            <CheckInIconBox $isCheckIn={selectDayCheckIN != null}>
+                            <CheckInIconBox $isCheckIn={selectDayCheckIN.length != 0}>
                                 <CheckInIcon />
                             </CheckInIconBox>
                         </SelectDayCheckIn>
