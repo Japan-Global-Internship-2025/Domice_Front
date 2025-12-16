@@ -132,37 +132,44 @@ export default function Login() {
     const [selectedRegion, setSelectedRegion] = useState(null);
     const [roomNumber, setRoomNumber] = useState(null);
     const [selectedGender, setSelectedGender] = useState(null);
+    const [isTeacher, setIsTeacher] = useState(false);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
     async function finish() {
-        if (!roomNumber) {
-            alert('호실를 입력해주세요');
-            return;
-        }
-        else if (selectedRegion === null) {
-            alert('주거지역을 선택해주세요');
-            return;
-        }
-        else if (selectedGender === null) {
-            alert('성별을 선택해주세요');
-            return;
+        if (!isTeacher) {
+            if (!roomNumber) {
+                alert('호실를 입력해주세요');
+                return;
+            }
+            else if (selectedRegion === null) {
+                alert('주거지역을 선택해주세요');
+                return;
+            }
+            else if (!(roomNumber >= 401 && roomNumber <= 418) && !(roomNumber >= 501 && roomNumber <= 518)) {
+                alert('올바른 호실을 입력해주세요');
+                return;
+            }
         }
 
-        if (!(roomNumber >= 401 && roomNumber <= 418) && !(roomNumber >= 501 && roomNumber <= 518)) {
-            alert('올바른 호실을 입력해주세요');
+        if (selectedGender === null) {
+            alert('성별을 선택해주세요');
             return;
         }
 
         const userData = {
             id: user.id,
-            name: user.given_name,
-            room: roomNumber,
-            region: regionOptions[selectedRegion].value,
-            gender: genderOptions[selectedGender].value,
+            name: user.name,
             email: user.email,
+            role: isTeacher? 'teacher' : 'student',
+            gender: genderOptions[selectedGender].value,
             profile_img: user.picture,
-            stu_num: user.stu_num,
-        };
+        }
+        if (!isTeacher) {
+            userData.name = user.given_name,
+            userData.room = roomNumber,
+            userData.region = regionOptions[selectedRegion].value,
+            userData.stu_num = user.stu_num
+        }
         console.log(userData);
 
         try {
@@ -178,7 +185,7 @@ export default function Login() {
             console.log('Server Response:', data);
             alert('회원가입이 완료되었습니다!');
             if (data.success) {
-                navigate('/home');
+                navigate('/');
             }
             return data;
         } catch (error) {
@@ -210,6 +217,10 @@ export default function Login() {
                     if (data.data.join) {
                         navigate('/home');
                     }
+
+                    if (data.data.role === 'teacher') {
+                        setIsTeacher(true);
+                    }
                     setUser(data.data);
                 }
                 else {
@@ -235,26 +246,26 @@ export default function Login() {
                             이름
                         </InfoLabel>
                         <InfoText>
-                            {user ? user.given_name : 'Loading...'}
+                            {user ? user.role == 'student' ? user.given_name : user.name : 'Loading...'}
                         </InfoText>
                     </UserInfo>
-                    <UserInfo>
+                    {!isTeacher && <UserInfo>
                         <InfoLabel>
                             학번
                         </InfoLabel>
                         <InfoText>
                             {user ? user.stu_num : 'Loading...'}
                         </InfoText>
-                    </UserInfo>
+                    </UserInfo>}
                 </InfoContainer>
                 <InputContainer>
-                    <InputBox>
+                    {!isTeacher && <InputBox>
                         <InputLabel>
                             호실을 입력해주세요.
                         </InputLabel>
                         <InputRoomNumber type="number" placeholder="ex) 401" name='room' onChange={(e) => { setRoomNumber(e.target.value) }} />
-                    </InputBox>
-                    <InputBox>
+                    </InputBox>}
+                    {!isTeacher && <InputBox>
                         <InputLabel>
                             주거지역을 선택해주세요.
                         </InputLabel>
@@ -264,7 +275,7 @@ export default function Login() {
                             selectedValue={selectedRegion}
                             onChange={setSelectedRegion}
                         />
-                    </InputBox>
+                    </InputBox>}
                     <InputBox>
                         <InputLabel>
                             성별을 선택해주세요.
