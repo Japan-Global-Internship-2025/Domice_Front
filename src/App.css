@@ -9,3 +9,7 @@ select,
 textarea {
     font-family: 'Pretendard', sans-serif;
 }
+
+body {
+    background-color: #f9f9f9;
+}
