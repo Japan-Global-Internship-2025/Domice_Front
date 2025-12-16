@@ -224,8 +224,7 @@ export default function HomeMain(props) {
     const navigate = useNavigate();
     const { isTeacher, loading } = useContext(UserContext);
     const [qrData, setQrData] = useState();
-    const teacher_name = "김사감";
-    const teacher_phone = "010-1234-5678";
+    const teacher = props.teacher;
 
     const d = new Date();
     const year = d.getFullYear()
@@ -239,7 +238,7 @@ export default function HomeMain(props) {
             async function fetchQrData() {
                 const response = await fetch(`${SERVER_URL}/api/roomcheckins/qr`, {
                     method: 'GET',
-                    credentials: 'include'
+                    credentials: 'include',
                 })
                 const result = await response.json()
                 console.log(result);
@@ -278,14 +277,14 @@ export default function HomeMain(props) {
                         <TeacherIconBox>
                             <UserIcon />
                         </TeacherIconBox>
-                        <TeacherInfo>
+                        {teacher && <TeacherInfo>
                             <TeacherName>
-                                {teacher_name} 선생님
+                                {teacher.name} 선생님
                             </TeacherName>
                             <TeacherPhone>
-                                {teacher_phone}
+                                {teacher.phone}
                             </TeacherPhone>
-                        </TeacherInfo>
+                        </TeacherInfo> }
                     </BoxContent>
                 </TodayTeacherBox>
             </TodayTeacherContainer>

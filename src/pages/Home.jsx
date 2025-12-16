@@ -59,10 +59,10 @@ const NavList = [
 ]
 
 export default function Home() {
-    const { isTeacher, loading } = useContext(UserContext);
-    // console.log(isTeacher);
+    const { user, loading } = useContext(UserContext);
     const [navMenu, setNavMenu] = useState(0);
     const [mealInfo, setMealInfo] = useState([["로딩중..."], ["로딩중..."], ["로딩중..."]]);
+    const [teacherInfo, setTeacherInfo] = useState();
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
     useEffect(() => {
@@ -89,6 +89,19 @@ export default function Home() {
         fetchData();
     }, [])
 
+    useEffect(() => {
+        async function fecthData() {
+            const response = await fetch(`${SERVER_URL}/api/teacherInfo?gender=${user.gender}`, {
+                method: 'GET',
+                credentials: 'include',
+            })
+            const temp = await response.json()
+            console.log(temp);
+            setTeacherInfo(temp.data);
+        }
+        if (!loading) fecthData();
+    }, [loading])
+
     if (loading) return null;
 
     return (
@@ -105,7 +118,7 @@ export default function Home() {
                 {<SelectMenuLine $left={NavList[navMenu].left} />}
             </Nav>
             <Main>
-                {navMenu == 0 ? <HomeMain meals={mealInfo}/> : <HomeOut/>}
+                {navMenu == 0 ? <HomeMain meals={mealInfo} teacher={teacherInfo}/> : <HomeOut/>}
             </Main>
             <Navigation idx={0} />
         </Container>
