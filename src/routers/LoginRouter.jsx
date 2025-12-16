@@ -6,7 +6,7 @@ export default function LoginRouter() {
     return (
         <Routes>
             <Route path="/" element={<Intro />} />
-            <Route path="/sign_up" element={<Login />} />
+            <Route path="/login" element={<Login />} />
         </Routes>
     )
 };

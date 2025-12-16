@@ -1,8 +1,8 @@
 import './App.css'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Route, Routes, BrowserRouter } from 'react-router-dom'
-import HomeRouter from './routers/HomeRouter'
-import LoginRouter from './routers/LoginRouter'
+import HomeRouter from './routes/HomeRouter'
+import LoginRouter from './routes/LoginRouter'
 
 function App() {
   return (
