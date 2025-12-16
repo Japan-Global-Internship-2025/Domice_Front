@@ -59,7 +59,7 @@ const NavList = [
 ]
 
 export default function Home() {
-    const { isTeacher, loading } = useContext(UserContext);
+    const { user, loading } = useContext(UserContext);
     const [navMenu, setNavMenu] = useState(0);
     const [mealInfo, setMealInfo] = useState([["로딩중..."], ["로딩중..."], ["로딩중..."]]);
     const [teacherInfo, setTeacherInfo] = useState();
@@ -91,16 +91,16 @@ export default function Home() {
 
     useEffect(() => {
         async function fecthData() {
-            const response = await fetch(`${SERVER_URL}/api/teacherInfo`, {
+            const response = await fetch(`${SERVER_URL}/api/teacherInfo?gender=${user.gender}`, {
                 method: 'GET',
-                credentials: 'include'
+                credentials: 'include',
             })
             const temp = await response.json()
             console.log(temp);
             setTeacherInfo(temp.data);
         }
-        fecthData();
-    }, [])
+        if (!loading) fecthData();
+    }, [loading])
 
     if (loading) return null;
 

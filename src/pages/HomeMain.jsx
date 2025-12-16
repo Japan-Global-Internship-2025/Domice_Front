@@ -238,7 +238,7 @@ export default function HomeMain(props) {
             async function fetchQrData() {
                 const response = await fetch(`${SERVER_URL}/api/roomcheckins/qr`, {
                     method: 'GET',
-                    credentials: 'include'
+                    credentials: 'include',
                 })
                 const result = await response.json()
                 console.log(result);
