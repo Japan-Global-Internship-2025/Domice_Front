@@ -58,7 +58,7 @@ const CheckText = styled.p`
     line-height: 22px;
 `;
 
-export default function OutRequestContent(props) {
+export default function OutListContent(props) {
     const isTeacher = props.isTeacher;
     const user_id = props.user_id;
 
