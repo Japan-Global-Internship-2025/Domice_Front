@@ -4,7 +4,7 @@ import Header from "../components/Header"
 import Navigation from "../components/Navigation";
 import MealToday from "./MealToday";
 import MealMonth from "./MealMonth";
-import { generateCalendar } from "../services/date_format";
+import { generateCalendar } from "../services/DateFormat";
 
 const Container = styled.div`
     height: 100vh;

@@ -36,14 +36,14 @@ export default function BoardMain() {
                 method: 'GET'
             })
             const temp = await response.json()
-            console.log(temp);
+            // console.log(temp);
             setData(temp.data);
         }
         fetchData();
     }, [])
     return (
         <Container>
-            <BoardList data={data} type={"all"} />
+            <BoardList data={data} type={"all"} title={"전체 게시판"}/>
         </Container>
     )
 };

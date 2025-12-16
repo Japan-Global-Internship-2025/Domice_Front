@@ -38,16 +38,17 @@ const ContentReason = styled.p`
 
 const ContentCheck = styled.div`
     display: flex;
+    gap: 6px;
+`;
+
+const CheckText = styled.p`
+    display: flex;
     padding: 1px 10px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 10px;
     border-radius: 30px;
-    background: #3D8EFF;
-`;
-
-const CheckText = styled.p`
+    background: ${(props) => props.$isApproved ? "#3D8EFF" : "#FF2929"};
     align-self: stretch;
     color: #FFF;
     text-align: center;
@@ -57,7 +58,15 @@ const CheckText = styled.p`
     line-height: 22px;
 `;
 
-export default function OutRequestContent(props) {
+export default function OutListContent(props) {
+    const isTeacher = props.isTeacher;
+    const user_id = props.user_id;
+
+    const handleApprove = async (approve) => {
+        const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+        alert(`${user_id}\n${approve ? "승인" : "거절"} 처리되었습니다.`);
+    }
+
     return (
         <ContentBox>
             <ContentInnerBox>
@@ -68,11 +77,22 @@ export default function OutRequestContent(props) {
                     {props.reason}
                 </ContentReason>
             </ContentInnerBox>
-            <ContentCheck>
-                <CheckText>
-                    {props.ok? "승인": "거절"}
-                </CheckText> 
-            </ContentCheck>
+            {isTeacher
+                ?
+                <ContentCheck >
+                    <CheckText $isApproved={true} onClick={() => handleApprove(true)}>
+                        승인
+                    </CheckText>
+                    <CheckText $isApproved={false} onClick={() => handleApprove(false)}>
+                        거절
+                    </CheckText>
+                </ContentCheck>
+                :
+                <ContentCheck>
+                    <CheckText $isApproved={props.ok}>
+                        {props.ok ? "승인" : "거절"}
+                    </CheckText>
+                </ContentCheck>}
         </ContentBox>
     )
 }

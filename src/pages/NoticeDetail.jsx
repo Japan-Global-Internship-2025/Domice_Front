@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import Header from "../components/Header"
 import Navigation from "../components/Navigation";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dataAndDayAndTime } from "../services/date_format"
+import { dataAndDayAndTime } from "../services/DateFormat"
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from '../services/UserContext';
 
 const Container = styled.div`
     height: 100vh;
@@ -18,7 +19,7 @@ const Main = styled.div`
     background-color: #f9f9f9;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
 `;
 
 const ContentBox = styled.div`
@@ -100,7 +101,23 @@ const MoveBtn = styled.div`
     line-height: 22px;
 `
 
+const EditBtn = styled.button`
+    display: flex;
+    padding: 16px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+    background: #48BFA2;
+    border: none;
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px; /* 137.5% */
+`;
+
 export default function NoticeDetail(props) {
+    const { isTeacher, loading } = useContext(UserContext);
     const [data, setData] = useState(null);
     const [postId, setPostId] = useState(null);
     const navigate = useNavigate();
@@ -141,6 +158,11 @@ export default function NoticeDetail(props) {
                             {data.content}
                         </Content>
                     </ContentBox>
+                }
+                { isTeacher && 
+                    <EditBtn onClick={() => navigate(`/notice/update/${id}`)}>
+                        수정하기
+                    </EditBtn>
                 }
                 <MoveBox>
                     <MoveBtn $background={"#fff"} $color={"#48BFA2"} onClick={() => navigate(`/notice/${postId - 1}`)}>

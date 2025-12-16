@@ -32,7 +32,7 @@ export default function BoardInNav(props) {
                 <BoardBackBtn />
             </BackBtnWrapper>
             <NavTitle>
-                {props.type? props.type == 'all' ? '전체게시판' : '1대1 문의' : '작성하기'}
+                {props.title}
             </NavTitle>
         </Nav>
     )

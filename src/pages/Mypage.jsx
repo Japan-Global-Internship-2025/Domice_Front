@@ -2,10 +2,12 @@ import styled from "styled-components";
 import Header from "../components/Header"
 import Navigation from "../components/Navigation";
 import ArrowIcon from "../assets/icon/right_outline_arrow.svg?react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GoMyBoardIcon from "../assets/icon/mypage_go_myboard.svg?react"
-import { dateAndDay } from "../services/date_format"
+import { dateAndDay } from "../services/DateFormat"
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from '../services/UserContext';
+import { stuNumToGradeANDClass } from "../services/NumberFormat";
 
 const Container = styled.div``;
 
@@ -129,6 +131,7 @@ const TotalScoreContainer = styled.div`
     align-self: stretch;
     border-radius: 14px;
     background: #FFF;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
 `;
 
 const TotalScoreBox = styled.div`
@@ -189,6 +192,7 @@ const LogoutBtn = styled.div`
     align-self: stretch;
     border-radius: 14px;
     background: #FFF;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
 `
 
 const LogoutBtnText = styled.p`
@@ -272,9 +276,12 @@ const LogBoxDate = styled.p`
 export default function Mypage() {
     const navigate = useNavigate();
     const [data, setData] = useState(null)
+    const [stuDetails, setStuDetails] = useState(null);
     const [scoreDetail, setScoreDetail] = useState(false);
     const [meritlogs, setMeritlogs] = useState(null);
+    const { isTeacher, loading } = useContext(UserContext);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
+
     useEffect(() => {
         async function fecthData() {
             const response = await fetch(`${SERVER_URL}/api/profile`, {
@@ -284,9 +291,10 @@ export default function Mypage() {
             const temp = await response.json()
             if (!response.ok) {
                 alert("로그인이 필요합니다.")
-                navigate("/")
+                navigate("/login")
             }
             console.log(temp);
+            if (!isTeacher) { setStuDetails(temp.data.stu_details); }
             setData(temp.data);
         }
         fecthData();
@@ -302,25 +310,29 @@ export default function Mypage() {
             console.log(temp);
             setMeritlogs(temp.data);
         }
-        fecthData();
+        if (isTeacher) fecthData();
     }, []);
 
     const logoutHandler = () => {
-        async function logout() {
-            const response = await fetch(`${SERVER_URL}/api/auth/logout`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            const temp = await response.json()
-            if (response.ok) {
-                navigate('/')
+        if (confirm("정말 로그아웃하시겠습니까?")) {
+            async function logout() {
+                const response = await fetch(`${SERVER_URL}/api/auth/logout`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const temp = await response.json()
+                if (response.ok) {
+                    navigate('/login')
+                }
+                console.log(temp);
+                setData(temp.data);
             }
-            console.log(temp);
-            setData(temp.data);
+            logout();
         }
-        logout();
     }
 
+    // console.log(isTeacher);
+    if (loading) return null;
 
     return (
         <Container>
@@ -332,22 +344,22 @@ export default function Mypage() {
                     </UserProfile>
                     <UserInfoBox>
                         <UserInfo>
-                            <UserName>{data.name}</UserName>
-                            <UserRoom>{data.room}호</UserRoom>
+                            <UserName>{isTeacher ? `${data.name} 선생님` : `${data.name}`}</UserName>
+                            {!isTeacher && <UserRoom>{stuDetails.room}호</UserRoom>}
                         </UserInfo>
                         <UserInfo>
-                            <UserSchool>미림마이스터고등학교 {data.stu_num.slice(0, 1)}학년 {data.stu_num.slice(1, 2)}반</UserSchool>
+                            <UserSchool>미림마이스터고등학교 {!isTeacher && stuNumToGradeANDClass(stuDetails.stu_num)}</UserSchool>
                         </UserInfo>
                     </UserInfoBox>
                 </UserInfoContainer>
-                <UserScoreBox>
+                {!isTeacher && <UserScoreBox>
                     <PlusMinusScore>
                         <ScoreInnerBox $background="#48BFA2">
                             <InnerBox $justify="start">
                                 <ScoreBoxText $color="#fff" $size="18">상점</ScoreBoxText>
                             </InnerBox>
                             <InnerBox $justify="end">
-                                <ScoreBoxText $color="#fff" $size="24">{data.plus_score}점</ScoreBoxText>
+                                <ScoreBoxText $color="#fff" $size="24">{stuDetails.plus_score}점</ScoreBoxText>
                             </InnerBox>
                         </ScoreInnerBox>
                         <ScoreInnerBox $background="#fff">
@@ -355,14 +367,14 @@ export default function Mypage() {
                                 <ScoreBoxText $color="#48BFA2" $size="18">벌점</ScoreBoxText>
                             </InnerBox>
                             <InnerBox $justify="end">
-                                <ScoreBoxText $color="#48BFA2" $size="24">{data.minus_score}점</ScoreBoxText>
+                                <ScoreBoxText $color="#48BFA2" $size="24">{stuDetails.minus_score}점</ScoreBoxText>
                             </InnerBox>
                         </ScoreInnerBox>
                     </PlusMinusScore>
                     <TotalScoreContainer onClick={() => { setScoreDetail(!scoreDetail) }}>
                         <TotalScoreBox>
                             <TotalScoreText>
-                                총 상점 {data.plus_score - data.minus_score}점
+                                총 상점 {stuDetails.plus_score - stuDetails.minus_score}점
                             </TotalScoreText>
                             <TotalScoreDatailBtn>
                                 <GoDatailText>{scoreDetail ? '상벌점 내역 숨기기' : '상벌점 내역 보기'}</GoDatailText>
@@ -383,8 +395,8 @@ export default function Mypage() {
                             )
                         })}
                     </TotalScoreContainer>
-                </UserScoreBox>
-                <MyBoard>
+                </UserScoreBox>}
+                {!isTeacher && <MyBoard>
                     <GoMyBoardBtn $position='top'>
                         <GoBoardBtnText>내가 쓴 글 보기</GoBoardBtnText>
                         <GoMyBoardIcon />
@@ -393,8 +405,8 @@ export default function Mypage() {
                         <GoBoardBtnText>1대1 문의 내역 확인</GoBoardBtnText>
                         <GoMyBoardIcon />
                     </GoMyBoardBtn>
-                </MyBoard>
-                <LogoutBtn onClick={() => confirm("정말 로그아웃 하시겠습니까?") && logoutHandler}>
+                </MyBoard>}
+                <LogoutBtn onClick={() => logoutHandler()}>
                     <LogoutBtnText>로그아웃</LogoutBtnText>
                 </LogoutBtn>
             </Main>}

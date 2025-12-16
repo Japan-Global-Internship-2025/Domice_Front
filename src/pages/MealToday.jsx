@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import MidBoxTitle from "../components/MidBoxTitle";
 import { useState, useEffect } from "react";
-import { getMeal } from '../services/meal'
+import { getMeal } from '../services/Meal'
 import RightArrowIcon from "../assets/icon/meal_right_arrow.svg?react";
 import LeftArrowIcon from "../assets/icon/meal_left_arrow.svg?react";
 import MealCalendar from "../assets/icon/meal_calendar.svg?react"
-import { dateAndDay } from "../services/date_format"
+import { dateAndDay } from "../services/DateFormat"
 
 const Container = styled.div``;
 

@@ -78,7 +78,7 @@ export default function BoardDetail(props) {
     return (
         <Container>
             <Header />
-            <BoardInNav type={type} />
+            <BoardInNav title={props.title} />
             <Main>
                 {data && <ContentBox>
                     <Title>

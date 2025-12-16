@@ -18,10 +18,7 @@ export function dataAndDayAndTime(date) {
     return `${str_date} ${hours}:${minutes}`;
 }
 
-export function generateCalendar() {
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth() + 1; // 1월~12월 표기 위해 +1
+export function generateCalendar(currentYear = new Date().getFullYear(), currentMonth = new Date().getMonth() + 1) {
     const firstDate = new Date(currentYear, currentMonth - 1, 1);
     const lastDate = new Date(currentYear, currentMonth, 0).getDate();
 
@@ -72,6 +69,42 @@ export function getRelativeTime(date) {
             return `${betweenTime}${value.name} 전`;
         }
     }
-
     return '방금 전';
+}
+
+export function getWeekDates() {
+    const today = new Date();
+    let currentDay = today.getDay();
+    let diff = (currentDay === 0) ? 6 : currentDay - 1;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - diff);
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + i);
+        weekDates.push(date.getDate());
+    }
+    return [weekDates];
+}
+
+export function getFridayToSundayForWeekOf(referenceDate) {
+    const today = new Date(referenceDate);
+    const currentDay = today.getDay(); 
+    const diffToFriday = 5 - currentDay;
+    const diffToSunday = 0 - currentDay;
+
+    let friday = new Date(today);
+    friday.setDate(today.getDate() + diffToFriday);
+
+    let sunday = new Date(today);
+    if (friday.getDay() === 5 && sunday.getDay() === 0) {
+        sunday.setDate(friday.getDate() + 2);
+    } else {
+        sunday.setDate(today.getDate() + diffToSunday);
+    }
+
+    const formattedFriday = dateAndDay(friday);
+    const formattedSunday = dateAndDay(sunday);
+
+    return `${formattedFriday} ~ ${formattedSunday}`;
 }

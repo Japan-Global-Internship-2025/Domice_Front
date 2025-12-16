@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { getRelativeTime } from "../services/date_format";
+import { getRelativeTime } from "../services/DateFormat";
 import DivideLine from "../assets/icon/board_info_divide_line.svg?react";
 
 const TimeAndAuthor = styled.div`

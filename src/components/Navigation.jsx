@@ -1,10 +1,13 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useContext } from 'react';
+import { UserContext } from '../services/UserContext';
 import home from "../assets/icon/home.svg?react";
 import notice from "../assets/icon/notice.svg?react";
 import meal from "../assets/icon/meal.svg?react";
-import board from "../assets/icon/board.svg?react"; 
+import board from "../assets/icon/board.svg?react";
 import mypage from "../assets/icon/user.svg?react";
+import manage from "../assets/icon/stu_manage.svg?react";
 
 const Container = styled.div`
     display: flex;
@@ -64,26 +67,36 @@ const Label = styled.p`
     line-height: 22px;
 `;
 
-const list = [
-    { img: home, value: "홈", idx: 0, link: "/home" },
-    { img: notice, value: "공지", idx: 1, link: "/notice" },
-    { img: meal, value: "급식정보", idx: 2, link: "/meal" },
-    { img: board, value: "게시판", idx: 3, link: "/board" },
-    { img: mypage, value: "마이페이지", idx: 4, link: "/mypage" },
-]
-
 export default function Navigation(props) {
     const navigate = useNavigate();
+    const { isTeacher, loading } = useContext(UserContext);
+    const { idx: currentIdx } = props;
+
+    if (loading) return null;
+
+    const targetItem = isTeacher
+        ? { img: manage, value: "학생관리", idx: 2, link: "/manage" } // 선생님일 때
+        : { img: meal, value: "급식정보", idx: 2, link: "/meal" };    // 학생일 때
+
+    const list = [
+        { img: home, value: "홈", idx: 0, link: "/" },
+        { img: notice, value: "공지", idx: 1, link: "/notice" },
+        targetItem, // 여기가 교체되는 부분입니다.
+        { img: board, value: "게시판", idx: 3, link: "/board" },
+        { img: mypage, value: "마이페이지", idx: 4, link: "/mypage" },
+    ];
+
+
     return (
         <Container>
             <InnerBox>
                 {list.map((item, idx) => {
-                    const IconComponent = item.img; 
+                    const IconComponent = item.img;
                     const isActive = idx === props.idx;
 
                     return (
-                        <Menu key={idx} $active={isActive} onClick={() => {navigate(item.link)}}>
-                            <IconComponent /> 
+                        <Menu key={idx} $active={isActive} onClick={() => { navigate(item.link) }}>
+                            <IconComponent />
                             <Label>{item.value}</Label>
                         </Menu>
                     )

@@ -38,14 +38,14 @@ export default function BoardPrivate() {
                 credentials: 'include'
             })
             const temp = await response.json()
-            console.log(temp);
+            // console.log(temp);
             setData(temp.data);
         }
         fetchData();
     }, [])
     return (
         <Container>
-            <BoardList data={data} type={"private"} />
+            <BoardList data={data} type={"private"} title={"1대1 문의"} />
         </Container>
     )
 };

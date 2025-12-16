@@ -35,7 +35,7 @@ const CalendarDate = styled.div`
     align-items: center;
     border-radius: 14px;
     background: #FFF;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: ${props => props.$shadow && "0 0 10px 0 rgba(0, 0, 0, 0.06)"};
 `;
 
 const DateBox = styled.div`
@@ -115,21 +115,22 @@ const DateText = styled.p`
 `;
 
 export default function Calendar(props) {
-    const now = new Date();
-    const now_month = now.getMonth() + 1;
+    const today = new Date();
+    const now_month = today.getMonth() + 1;
     const days = ['월', '화', '수', '목', '금', '토', '일'];
-    const now_day = props.now_day? now.getDay(): 7;
-    const todayDate = now.getDate();
+    const now_day = props.now_day? today.getDay(): 7;
+    const todayDate = today.getDate();
     const mondayBasedDay = (now_day === 0) ? 6 : now_day - 1;
     const dates = props.dates;
+    const hiddenMonth = props.hiddenMonth || false;
     // console.log(dates);
 
     const handleDateClick = (dayNumber) => {
         if (!dayNumber || !props.onDateClick) return;
 
         const selectedDate = new Date(
-            now.getFullYear(), 
-            now.getMonth(), 
+            today.getFullYear(), 
+            today.getMonth(), 
             dayNumber
         );
 
@@ -138,10 +139,10 @@ export default function Calendar(props) {
 
     return (
         <TodayCalendarContainer>
-            <CalendarMonth>
+            { !hiddenMonth && <CalendarMonth>
                 {now_month}월
-            </CalendarMonth>
-            <CalendarDate $padding={props.$padding}>
+            </CalendarMonth> }
+            <CalendarDate $padding={props.$padding} $shadow={!hiddenMonth}>
                 <DateBox>
                     <DateTitle>
                         {days.map((item, idx) => {

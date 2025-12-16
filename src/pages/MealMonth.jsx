@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import MidBoxTitle from "../components/MidBoxTitle";
 import Calendar from "../components/Calendar";
-import { getMeal } from '../services/meal'
+import { getMeal } from '../services/Meal'
 import TodayMealInfo from "../components/TodayMealInfo";
 
 const Container = styled.div`
@@ -10,9 +10,7 @@ const Container = styled.div`
     flex-direction: column;
     overflow-y: auto;
     background-color: #f9f9f9;
-    position: relative;
     height: 100%;
-    margin-bottom: 60px;
 `;
 
 const MonthCalendar = styled.div`
@@ -26,8 +24,7 @@ const SelectMeal = styled.div`
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
     padding: 27px;
     box-sizing: border-box;
-    position: absolute;
-    bottom: 0;
+    margin-top: auto;
 `;
 
 export default function MealMonth(props) {
