@@ -173,7 +173,6 @@ export default function Login() {
         console.log(userData);
 
         try {
-            console.log("회원가입 시도");
             const response = await fetch(`${SERVER_URL}/api/auth/signup`, {
                 method: 'POST',
                 headers: {
@@ -199,7 +198,6 @@ export default function Login() {
         const accessToken = parsedHash.get('access_token');
         const fetchUserInfo = async (accessToken) => {
             try {
-                console.log("로그인 시도");
                 const response = await fetch(`${SERVER_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: {
@@ -215,7 +213,7 @@ export default function Login() {
                     console.log(data.data)
 
                     if (data.data.join) {
-                        navigate('/home');
+                        navigate('/');
                     }
 
                     if (data.data.role === 'teacher') {
@@ -223,9 +221,14 @@ export default function Login() {
                     }
                     setUser(data.data);
                 }
+                else if (response.status == 403) {
+                    alert("학교 계정으로 로그인해주세요");
+                    navigate('/login');
+                    return;
+                }
                 else {
-                    alert("학교 계정으로 로그인해주세요.");
-                    navigate('/');
+                    alert("서버 오류 발생. 관리자한테 문의하세요");
+                    navigate('/login');
                     return;
                 }
 
