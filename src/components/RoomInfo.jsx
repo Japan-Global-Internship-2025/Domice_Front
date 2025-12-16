@@ -147,6 +147,8 @@ const ScoreValue = styled.p`
 export default function RoomInfo(props) {
     const { student, idx } = props;
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+    // console.log(student);
+    const stu_num = String(student.stu_details.stu_num);
     return (
         <StudentContentBox key={idx}>
             <StudentInfo onClick={() => setIsDetailOpen(!isDetailOpen)}>
@@ -163,17 +165,17 @@ export default function RoomInfo(props) {
             <StudentDetail $isOpen={isDetailOpen}>
                 <DetailInfo>
                     <SchoolInfoLabel>학교</SchoolInfoLabel>
-                    <SchoolInfoText>미림마이스터고등학교 {`${String(student.stu_num).slice(0, 1)}학년 ${String(student.stu_num).slice(1, 2)}반`}</SchoolInfoText>
-                    <RegionInfo>{student.region === 0 ? "수도권" : "지방"}생</RegionInfo>
+                    <SchoolInfoText>미림마이스터고등학교 {`${stu_num.slice(0, 1)}학년 ${stu_num.slice(1, 2)}반`}</SchoolInfoText>
+                    <RegionInfo>{student.stu_details.region === 0 ? "수도권" : "지방"}생</RegionInfo>
                 </DetailInfo>
                 <PlusMinusScore>
                     <PlusMinusBox $background="#48BFA2" $border_color="#48BFA2" $color="#FFF">
                         <ScoreLabel>상점</ScoreLabel>
-                        <ScoreValue>{student.plus_score}점</ScoreValue>
+                        <ScoreValue>{student.stu_details.plus_score}점</ScoreValue>
                     </PlusMinusBox>
                     <PlusMinusBox $background="#FFF" $border_color="#48BFA2" $color="#48BFA2">
                         <ScoreLabel>벌점</ScoreLabel>
-                        <ScoreValue>{student.minus_score}점</ScoreValue>
+                        <ScoreValue>{student.stu_details.minus_score}점</ScoreValue>
                     </PlusMinusBox>
                 </PlusMinusScore>
             </StudentDetail>

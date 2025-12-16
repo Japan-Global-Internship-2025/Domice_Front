@@ -150,17 +150,17 @@ export default function NoticeWrite(props) {
         if (is_secret) data.is_secret = is_secret;
         console.log(data);
         async function submitData() {
-            const response = await fetch(`${SERVER_URL}/api/${type}`, {
+            const response = await fetch(`${SERVER_URL}/api/notices`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include',
                 body: JSON.stringify(data)
             })
             if (response.ok) {
                 alert("등록 성공!")
-                navigate("/board");
+                navigate("/notice");
             }
         }
         submitData();

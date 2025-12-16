@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import BoardInNav from "../components/BoardInNav";
 import QRScanFinderIcon from "../assets/icon/qrscan_finder_icon.svg?react";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
     height: 100dvh; 
@@ -91,10 +92,12 @@ const FINDER_SIZE = 240;
 const FINDER_RADIUS = 23;
 
 export default function QRScan() {
+    const navigate = useNavigate();
     const [devices, setDevices] = useState([]);
     const [selectedDevice, setSelectedDevice] = useState('');
     const [isInitialized, setIsInitialized] = useState(false);
     const [permissionState, setPermissionState] = useState('prompt');
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
     // 권한 상태와 장치 목록을 모두 업데이트하는 함수
     const updateDevices = useCallback(async () => {
@@ -178,8 +181,27 @@ export default function QRScan() {
     };
 
     const handleScan = (result) => {
-        console.log(result);
-        alert(result[0].rawValue);
+        const value = result[0].rawValue
+        async function postData() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/roomcheckins`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({qrData: value})
+                })
+                const result = await response.json();
+                if (response.ok) {
+                    alert("입실체크 되었습니다!")
+                    navigate('/');
+                }
+            } catch (e) {
+                console.error("QR코드 체크과정 중 에러 발생")
+            }
+        }
+        postData();
     }
 
     const renderScannerContent = () => {
@@ -231,7 +253,7 @@ export default function QRScan() {
                 <BlurOverlay size={FINDER_SIZE} radius={FINDER_RADIUS} />
                 <FinderArea size={FINDER_SIZE} radius={FINDER_RADIUS}>
                     <FinderInnerBox>
-                        <QRScanFinderIcon/>
+                        <QRScanFinderIcon />
                     </FinderInnerBox>
                 </FinderArea>
             </ScannerWrapper>

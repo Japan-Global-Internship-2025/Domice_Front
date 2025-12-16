@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const ContentBox = styled.div`
@@ -48,7 +50,7 @@ const CheckText = styled.p`
     justify-content: center;
     align-items: center;
     border-radius: 30px;
-    background: ${(props) => props.$isApproved ? "#3D8EFF" : "#FF2929"};
+    background: ${(props) => props.$Background};
     align-self: stretch;
     color: #FFF;
     text-align: center;
@@ -59,38 +61,83 @@ const CheckText = styled.p`
 `;
 
 export default function OutListContent(props) {
+    const navigate = useNavigate();
     const isTeacher = props.isTeacher;
-    const user_id = props.user_id;
+    const id = props.id;
+    const status = props.status;
+    const [strStatus, setStrStatus] = useState('');
+    const [statusBackground, setStatusBackground] = useState('#fff');
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+    useEffect(() => {
+        if (status === 0) {
+            setStrStatus('대기');
+            setStatusBackground('#686868');
+        }
+        else if (status === 1) {
+            setStrStatus('승인');
+            setStatusBackground('#3D8EFF');
+        }
+        else {
+            setStrStatus('거절');
+            setStatusBackground('#FF2929');
+        }
+    }, [status]);
 
     const handleApprove = async (approve) => {
-        const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-        alert(`${user_id}\n${approve ? "승인" : "거절"} 처리되었습니다.`);
+        const strApprove = approve ? "승인" : "거절"
+        const check = confirm(`${strApprove} 처리를 하시겠습니까?.`);
+        if (check) {
+            async function fetchData() {
+                try {
+                    const response = await fetch(`${SERVER_URL}/api/leave/check`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id: id, approval: approve })
+                    })
+                    if (response.ok) {
+                        alert(`${strApprove} 완료!`)
+                        navigate(0);
+                    }
+                    else {
+                        alert(`${strApprove} 실패. 관리자한테 문의하세요`);
+                    }
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            }
+            fetchData();
+        }
     }
 
     return (
         <ContentBox>
             <ContentInnerBox>
                 <ContentDate>
-                    {props.date}
+                    신청 : {props.date}
                 </ContentDate>
                 <ContentReason>
                     {props.reason}
                 </ContentReason>
             </ContentInnerBox>
-            {isTeacher
+            {isTeacher && status == 0
                 ?
                 <ContentCheck >
-                    <CheckText $isApproved={true} onClick={() => handleApprove(true)}>
+                    <CheckText $Background={'#3D8EFF'} onClick={() => handleApprove(true)}>
                         승인
                     </CheckText>
-                    <CheckText $isApproved={false} onClick={() => handleApprove(false)}>
+                    <CheckText $Background={'#FF2929'} onClick={() => handleApprove(false)}>
                         거절
                     </CheckText>
                 </ContentCheck>
                 :
                 <ContentCheck>
-                    <CheckText $isApproved={props.ok}>
-                        {props.ok ? "승인" : "거절"}
+                    <CheckText $Background={statusBackground}>
+                        {strStatus}
                     </CheckText>
                 </ContentCheck>}
         </ContentBox>

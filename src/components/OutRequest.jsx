@@ -204,6 +204,7 @@ export default function OutRequest(props) {
     const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [outReason, setOutReason] = useState("");
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
     const outRequestToggle = () => {
         setOutRequestBtn((prev) => !prev);
@@ -243,16 +244,35 @@ export default function OutRequest(props) {
         }
         const check = confirm(`일자 : ${dateAndDay(selectedDate)}\n사유 : ${outReason}\n위 내용이 맞습니까?`);
         if (check) {
-            alert("정상 처리되었습니다.");
-            setOutReason("");
-            outRequestToggle();
+            async function fetchData() {
+                try {
+                    const response = await fetch(`${SERVER_URL}/api/leave`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ leave_date: selectedDate, reason: outReason })
+                    })
+                    if (response.ok) {
+                        alert("등록 완료!")
+                    }
+                    else {
+                        alert("등록 실패. 관리자한테 문의하세요");
+                    }
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            }
+            fetchData();
         }
     }
 
     return (
         <OutRequestContainer>
             <OutRequsetTitle>
-                <LeftBoxTitle text={isTeacher ? "외출신청 내역" :"외출신청"} />
+                <LeftBoxTitle text={isTeacher ? "외출신청 내역" : "외출신청"} />
                 <ToDetail onClick={() => { setOutRequestDetail(!outRequsetDetail) }}>
                     <GoDetailText>
                         {outRequsetDetail ? '외출내역 숨기기' : '외출내역 보기'}
@@ -264,10 +284,10 @@ export default function OutRequest(props) {
             </OutRequsetTitle>
             {outRequsetDetail && <OutRequestHistory>
                 {data.map((item) => {
-                    const str_date = dateAndDay(new Date(item.leave_date));
+                    const str_date = dateAndDay(new Date(item.created_at));
                     return (
                         <OutListBox key={item.id} item={item} user_id={item.user_id}>
-                            <OutListContent date={str_date} reason={item.reason} ok={item.is_approved} isTeacher={isTeacher} user_id={item.user_id} />
+                            <OutListContent date={str_date} reason={item.reason} status={item.status} isTeacher={isTeacher} id={item.id} />
                         </OutListBox>
                     )
                 })}
@@ -292,7 +312,7 @@ export default function OutRequest(props) {
                                 </NextMonth>
                             </CalendarMonth>
                             <CalendarView>
-                                <Calendar dates={generateCalendar(currentYear, currentMonth)} hiddenMonth={true} onDateClick={handleDateSelect}/>
+                                <Calendar dates={generateCalendar(currentYear, currentMonth)} hiddenMonth={true} onDateClick={handleDateSelect} />
                             </CalendarView>
                         </OutRequestCalendar>
                         <OutRequestContentBox>
@@ -309,7 +329,7 @@ export default function OutRequest(props) {
                         </OutRequestContentBox>
                     </OutRequestForm>
                 }
-            </OutRequestBox> }
-        </OutRequestContainer> 
+            </OutRequestBox>}
+        </OutRequestContainer>
     )
 }

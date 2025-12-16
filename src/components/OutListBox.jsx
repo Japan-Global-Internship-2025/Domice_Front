@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { dateAndDay, getFridayToSundayForWeekOf } from "../services/DateFormat"
+import { dateAndDay, getFridayToSundayForWeekOf, getThisFriday } from "../services/DateFormat"
 import { useState, useEffect } from "react";
 
 const OutRequestList = styled.div`
@@ -44,10 +44,10 @@ export default function OutListBox({ children, item, type = "outRequest" }) {
     const [strDate, setStrDate] = useState("");
     useEffect(() => {
         if (type === "outRequest") {
-            setStrDate(dateAndDay(new Date(item?.created_at)));
+            setStrDate(dateAndDay(new Date(item?.leave_date)));
         }
         else {
-            setStrDate(dateAndDay(new Date()));
+            setStrDate(getFridayToSundayForWeekOf(new Date()));
         }
     }, [item, type]);
     
