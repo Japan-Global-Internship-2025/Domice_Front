@@ -2,6 +2,7 @@ import styled from "styled-components";
 import NoticeIcon from "../assets/icon/notice.svg?react";
 import ArrowIcon from "../assets/icon/top_right_arrow.svg?react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const TodayNoticeContainer = styled.div`
     margin-top: 20px;
@@ -39,7 +40,7 @@ const TodayNoticeBox = styled.div`
 `;
 
 const TodayNoticeText = styled.p`
-    color: ${prorp => prorp.$isActive? '#000000' : '#B3B3B3'};
+    color: ${prorp => prorp.$isActive? '#232323' : '#B3B3B3'};
     text-align: center;
     font-family: Pretendard;
     font-size: 14px;
@@ -48,6 +49,7 @@ const TodayNoticeText = styled.p`
 `;
 
 export default function TodayNotice() {
+    const navigate = useNavigate();
     const SERVER_URL = import.meta.env.VITE_SERVER_URL;
     const [noticeCount, setNoticeCount] = useState(0);
     useEffect(() => {
@@ -63,7 +65,7 @@ export default function TodayNotice() {
     }, [])
 
     return (
-        <TodayNoticeContainer>
+        <TodayNoticeContainer onClick={() => navigate('/notice')}>
             <TodayNoticeBox>
                 <NoticeIcon />
                 <TodayNoticeText $isActive={noticeCount > 0}>
