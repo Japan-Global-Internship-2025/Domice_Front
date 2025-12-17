@@ -14,8 +14,9 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`${SERVER_URL}/api/auth/me`, {
-          withCredentials: true,
+        const response = await fetch(`${SERVER_URL}/api/auth/me`, {
+          method: 'GET',
+          credentials: 'include'
         });
         setUser(response.data.data);
         if (response.ok) {
@@ -26,9 +27,6 @@ export const UserProvider = ({ children }) => {
         }
         else if (response.status == 403) {
           alert('권한 에러')
-        }
-        else {
-          alert('다른 에러...')
         }
       } catch (error) {
         console.log("로그인 안 된 상태거나 에러 발생");
