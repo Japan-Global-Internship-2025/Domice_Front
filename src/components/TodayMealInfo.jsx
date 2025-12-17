@@ -2,6 +2,8 @@ import styled from "styled-components";
 
 const MealsContent = styled.div`
     display: flex;
+    transition: max-height 0.5s ease-in-out;
+    max-height: 500px;
 `;
 
 const MealBox = styled.div`
@@ -46,23 +48,25 @@ const MealSpan = styled.span`
 const meal_title = ['아침', '점심', '저녁'];
 
 export default function TodayMealInfo(props) {
-    return <MealsContent>
-        {meal_title.map((item, idx) => {
-            const meals = props.meals[idx];
-            return (
-                <MealBox key={idx}>
-                    <MealTitle>{item}</MealTitle>
-                    <MealInfoBox>
-                        <MealInfo>
-                            {meals && Array.isArray(meals) && meals.map((item, mealIdx) => (
-                                <MealSpan key={mealIdx}>
-                                    {item}
-                                </MealSpan>
-                            ))}
-                        </MealInfo>
-                    </MealInfoBox>
-                </MealBox>
-            )
-        })}
-    </MealsContent>
+    return (
+        <MealsContent>
+            {meal_title.map((item, idx) => {
+                const meals = props.meals[idx];
+                return (
+                    <MealBox key={idx}>
+                        <MealTitle>{item}</MealTitle>
+                        <MealInfoBox>
+                            <MealInfo>
+                                {meals && Array.isArray(meals) && meals.map((item, mealIdx) => (
+                                    <MealSpan key={mealIdx}>
+                                        {item}
+                                    </MealSpan>
+                                ))}
+                            </MealInfo>
+                        </MealInfoBox>
+                    </MealBox>
+                )
+            })}
+        </MealsContent>
+    )
 };

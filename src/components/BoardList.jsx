@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import DownArrowIcon from "../assets/icon/down_outline_arrow.svg?react";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +46,7 @@ const InvisibleSelect = styled.select`
   opacity: 0;   /* 투명하게 만들어서 안 보이게 함 */
   cursor: pointer;
   appearance: none; /* 기본 화살표 제거 */
+  z-index: 10;
 `;
 
 const ContentList = styled.div`
@@ -111,19 +112,49 @@ const ContentBoxInfo = styled.div`
 
 const BoardDeleteBtn = styled.div`
 `
+const orderby_text = ['최신순 보기', '오래된순 보기'];
+const orderby_sort = ['latest', 'oldest']
 
-const orderby_text = ['최신순 보기', '오래된순 보기']
 export default function BoardList(props) {
     const [orderby, setOrderby] = useState(0)
     const navigate = useNavigate();
     const type = props.type;
     const { isTeacher, user } = useContext(UserContext);
-    const data = props.data;
+    const [data, setData] = useState(null);
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+    const fetchData = async () => {
+        const response = await fetch(`${SERVER_URL}/api/${type}?sort=${orderby_sort[orderby]}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        const temp = await response.json()
+        // console.log(temp);
+        setData(temp.data);
+    }
+
+    useEffect(() => {
+        setData(null);
+        fetchData();
+    }, [type, orderby])
 
     const handlerBoardDelete = (id) => {
         const check = confirm(`${id}번\n정말 삭제하시겠습니까?`);
         if (check) {
-            alert("삭제되었습니다.")
+            async function deletePost() {
+                const response = await fetch(`${SERVER_URL}/api/${type}/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include',
+                })
+                if (response.ok) {
+                    alert("삭제되었습니다.")
+                }
+                else {
+                    alert("서버 에러가 발생했습니다.")
+                }
+                fetchData();
+            }
+            deletePost();
         }
     }
 
@@ -134,7 +165,7 @@ export default function BoardList(props) {
                     <OrderByText>
                         {orderby_text[orderby]}
                     </OrderByText>
-                    <OrderByIcon>
+                    <OrderByIcon >
                         <DownArrowIcon />
                     </OrderByIcon>
                     <InvisibleSelect value={orderby} onChange={(e) => setOrderby(e.target.value)}>
@@ -148,11 +179,11 @@ export default function BoardList(props) {
                     // console.log(item);
                     const content = item.content;
                     let author_name;
-                    if (type == "private") {
+                    if (type == "inquires") {
                         author_name = item.reply ? "답변 완료" : "답변 미완료";
                     }
                     else {
-                        author_name = item.is_secret ? '익명' : item.profiles.name;
+                        author_name = item.is_secret ? '익명' : item.profiles?.name;
                     }
                     return (
                         <ContentBox key={idx} >
