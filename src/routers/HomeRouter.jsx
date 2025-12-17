@@ -30,8 +30,8 @@ export default function HomeRouter() {
                 <Route path='/manage' element={<Manage />} />
                 <Route path='/manage/room/:room' element={<ManageRoom />} />
                 <Route path='/manage/room/:room/score' element={<ManageScore />} />
-                <Route path='/board/private/:id' element={<BoardDetail type={"private"} title={"1대1 문의"} />} />
-                <Route path='/board/all/:id' element={<BoardDetail type={"all"} title={"전체 게시판"} />} />
+                <Route path='/board/inquires/:id' element={<BoardDetail type={"private"} title={"1대1 문의"} />} />
+                <Route path='/board/posts/:id' element={<BoardDetail type={"all"} title={"전체 게시판"} />} />
                 <Route path='/board/write' element={<BoardWrite title={"작성하기"} />} />
                 <Route path='/checkin' element={<QRScan />} />
             </Routes>

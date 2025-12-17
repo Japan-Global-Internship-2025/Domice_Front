@@ -1,416 +1,428 @@
-import styled from "styled-components";
-import Header from "../components/Header"
-import Navigation from "../components/Navigation";
-import ArrowIcon from "../assets/icon/right_outline_arrow.svg?react";
-import { useNavigate } from "react-router-dom";
-import GoMyBoardIcon from "../assets/icon/mypage_go_myboard.svg?react"
-import { dateAndDay } from "../services/DateFormat"
-import { useEffect, useState, useContext } from "react";
-import { UserContext } from '../services/UserContext';
-import { stuNumToGradeANDClass } from "../services/NumberFormat";
+    import styled from "styled-components";
+    import Header from "../components/Header"
+    import Navigation from "../components/Navigation";
+    import ArrowIcon from "../assets/icon/right_outline_arrow.svg?react";
+    import { useNavigate } from "react-router-dom";
+    import GoMyBoardIcon from "../assets/icon/mypage_go_myboard.svg?react"
+    import { dateAndDay } from "../services/DateFormat"
+    import { useEffect, useState, useContext } from "react";
+    import { UserContext } from '../services/UserContext';
+    import { stuNumToGradeANDClass } from "../services/NumberFormat";
 
-const Container = styled.div``;
+    const Container = styled.div``;
 
-const Main = styled.div`
-    padding: 32px 24px 60px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-`;
+    const Main = styled.div`
+        padding: 32px 24px 60px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    `;
 
-const UserInfoContainer = styled.div`
-    display: flex;
-    padding: 0 14px;
-    align-items: center;
-    align-self: stretch;
-    border-radius: 14px;
-    background: #FFF;
-`;
+    const UserInfoContainer = styled.div`
+        display: flex;
+        padding: 0 14px;
+        align-items: center;
+        align-self: stretch;
+        border-radius: 14px;
+        background: #FFF;
+    `;
 
-const UserProfile = styled.div`
-    padding: 22px 0px;
-    margin-right: 14px;
-    width: 64px;
-    height: 64px;
-`;
+    const UserProfile = styled.div`
+        padding: 22px 0px;
+        margin-right: 14px;
+        width: 64px;
+        height: 64px;
+    `;
 
-const UserProfileImg = styled.img`
-    width: 100%;
-    height: 100%;
-    background-image: url(${props => props.src});
-    border-radius: 100px;
-`;
-
-const UserInfoBox = styled.div`
-    
-`;
-
-const UserInfo = styled.div`
-    display: flex;
-    gap: 8px;
-`;
-
-const UserName = styled.p`
-    color: #404040;
-    text-align: center;
-    font-family: Pretendard;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 22px; /* 110% */
-`;
-
-const UserRoom = styled.p`
-    color: #404040;
-    text-align: center;
-    font-family: Pretendard;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 22px; /* 157.143% */
-`;
-
-const UserSchool = styled.p`
-    color: rgba(64, 64, 64, 0.64);
-    font-family: Pretendard;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 22px; /* 183.333% */
-`;
-
-const UserScoreBox = styled.div`
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-`;
-
-const PlusMinusScore = styled.div`
-    width: 100%;
-    display: flex;
-    gap: 6px;
-`;
-
-const ScoreInnerBox = styled.div`
-    flex: 1;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-    border-radius: 14px;
-    border: 1px solid #48BFA2;
-    background: ${props => props.$background};
-`;
-
-const InnerBox = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: ${props => props.$justify};
-    
-`;
-
-const ScoreBoxText = styled.p`
-    color: ${props => props.$color};
-    font-family: Pretendard;
-    font-size: ${props => props.$size}px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 22px; /* 122.222% */
-`;
-
-const TotalScoreContainer = styled.div` 
-    display: flex;
-    flex-direction: column;
-    padding: 18px 16px;
-    gap: 20px;
-    flex-shrink: 0;
-    align-self: stretch;
-    border-radius: 14px;
-    background: #FFF;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
-`;
-
-const TotalScoreBox = styled.div`
-    display: flex;
-`
-
-const TotalScoreText = styled.div`
-    color: #404040;
-    text-align: center;
-    font-family: Pretendard;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 22px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex: 1 0 0;
-`
-
-const TotalScoreDatailBtn = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 4px;
-`;
-
-const GoDatailText = styled.p`
-    color: rgba(64, 64, 64, 0.64);
-    font-family: Pretendard;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 22px; /* 183.333% */
-`;
-
-const GoDetailIcon = styled.div`
-    display: flex;
-    align-items: center;
-    width: 12px; 
-    height: 12px;
-    svg {
+    const UserProfileImg = styled.img`
         width: 100%;
         height: 100%;
-        transition: transform 0.3s ease;
-        ${props => props.$rotate && 'transform: rotate(90deg)'};
-        &:focus {
-            outline: none;
-        }
-    }
-`;
+        background-image: url(${props => props.src});
+        border-radius: 100px;
+    `;
 
-const LogoutBtn = styled.div`
-    display: flex;
-    padding: 10px 16px;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    align-self: stretch;
-    border-radius: 14px;
-    background: #FFF;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
-`
+    const UserInfoBox = styled.div`
+        
+    `;
 
-const LogoutBtnText = styled.p`
-    display: flex;
-    align-items: center;
-    color: #FF2929;
-    font-family: Pretendard;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 22px; /* 157.143% */
-`;
+    const UserInfo = styled.div`
+        display: flex;
+        gap: 8px;
+    `;
 
-const MyBoard = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
-    border-radius: 14px;
-`;
+    const UserName = styled.p`
+        color: #404040;
+        text-align: center;
+        font-family: Pretendard;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 22px; /* 110% */
+    `;
 
-const GoMyBoardBtn = styled.div`
-    display: flex;
-    padding: 16px;
-    align-items: center;
-    gap: 2px;
-    align-self: stretch;
-    border-radius: ${props => props.$position == 'top' ? '14px 14px 0.5px 0' : '0.5px 0 14px 14px'};
-    border: 0px solid rgba(64, 64, 64, 0.14);
-    background: #FFF;
-`
+    const UserRoom = styled.p`
+        color: #404040;
+        text-align: center;
+        font-family: Pretendard;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 22px; /* 157.143% */
+    `;
 
-const GoBoardBtnText = styled.p`
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex: 1 0 0;color: #404040;
-    text-align: center;
-    font-family: Pretendard;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 22px;
-`;
+    const UserSchool = styled.p`
+        color: rgba(64, 64, 64, 0.64);
+        font-family: Pretendard;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 22px; /* 183.333% */
+    `;
 
-const LogBox = styled.div`
-    
-`;
+    const UserScoreBox = styled.div`
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    `;
 
-const LogBoxTitle = styled.p`
-    color: #404040;
-    font-family: Pretendard;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 22px; 
-`
+    const PlusMinusScore = styled.div`
+        width: 100%;
+        display: flex;
+        gap: 6px;
+    `;
 
-const LogBoxContent = styled.div`
-    display: flex;
-    justify-content: space-around;
-`;
+    const ScoreInnerBox = styled.div`
+        flex: 1;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+        border-radius: 14px;
+        border: 1px solid #48BFA2;
+        background: ${props => props.$background};
+    `;
 
-const LogBoxReason = styled.p`
-    flex: 1 1 0;
-    color: rgba(64, 64, 64, 0.64);
-    font-family: Pretendard;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 22px;
-`
+    const InnerBox = styled.div`
+        width: 100%;
+        display: flex;
+        justify-content: ${props => props.$justify};
+        
+    `;
 
-const LogBoxDate = styled.p`
-    color: rgba(64, 64, 64, 0.64);
-    font-family: Pretendard;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 22px;
-`;
+    const ScoreBoxText = styled.p`
+        color: ${props => props.$color};
+        font-family: Pretendard;
+        font-size: ${props => props.$size}px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 22px; /* 122.222% */
+    `;
 
-export default function Mypage() {
-    const navigate = useNavigate();
-    const [data, setData] = useState(null)
-    const [stuDetails, setStuDetails] = useState(null);
-    const [scoreDetail, setScoreDetail] = useState(false);
-    const [meritlogs, setMeritlogs] = useState(null);
-    const { isTeacher, loading } = useContext(UserContext);
-    const SERVER_URL = import.meta.env.VITE_SERVER_URL
+    const TotalScoreContainer = styled.div` 
+        display: flex;
+        flex-direction: column;
+        padding: 18px 16px;
+        flex-shrink: 0;
+        align-self: stretch;
+        border-radius: 14px;
+        background: #FFF;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
+    `;
 
-    useEffect(() => {
-        async function fecthData() {
-            const response = await fetch(`${SERVER_URL}/api/profile`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            const temp = await response.json()
-            if (!response.ok) {
-                alert("로그인이 필요합니다.")
-                navigate("/login")
+    const TotalScoreBox = styled.div`
+        display: flex;
+    `
+
+    const ScoreHistoryBox = styled.div`
+        display: flex;
+        flex-direction: column;
+        transition: max-height 0.5s ease-in-out, padding 0.2s ease-in-out, gap 0.2s ease-in-out;
+        overflow: hidden; 
+        overflow-y: ${(props) => (props.$isOpen ? 'auto' : 'hidden')};
+        max-height: ${(props) => (props.$isOpen ? '5000px' : '0')};
+        padding: ${(props) => (props.$isOpen ? '20px 3px 0px 3px' : '0')};
+        gap: ${(props) => (props.$isOpen ? '10px' : '0')};
+    `
+
+    const TotalScoreText = styled.div`
+        color: #404040;
+        text-align: center;
+        font-family: Pretendard;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 22px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1 0 0;
+    `
+
+    const TotalScoreDatailBtn = styled.div`
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    `;
+
+    const GoDatailText = styled.p`
+        color: rgba(64, 64, 64, 0.64);
+        font-family: Pretendard;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 22px; /* 183.333% */
+    `;
+
+    const GoDetailIcon = styled.div`
+        display: flex;
+        align-items: center;
+        width: 12px; 
+        height: 12px;
+        svg {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease;
+            ${props => props.$rotate && 'transform: rotate(90deg)'};
+            &:focus {
+                outline: none;
             }
-            console.log(temp);
-            if (!isTeacher) { setStuDetails(temp.data.stu_details); }
-            setData(temp.data);
         }
-        fecthData();
-    }, []);
+    `;
 
-    useEffect(() => {
-        async function fecthData() {
-            const response = await fetch(`${SERVER_URL}/api/meritlogs`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            const temp = await response.json()
-            console.log(temp);
-            setMeritlogs(temp.data);
-        }
-        if (!isTeacher) fecthData();
-    }, []);
+    const LogoutBtn = styled.div`
+        display: flex;
+        padding: 10px 16px;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        align-self: stretch;
+        border-radius: 14px;
+        background: #FFF;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
+    `
 
-    const logoutHandler = () => {
-        if (confirm("정말 로그아웃하시겠습니까?")) {
-            async function logout() {
-                const response = await fetch(`${SERVER_URL}/api/auth/logout`, {
+    const LogoutBtnText = styled.p`
+        display: flex;
+        align-items: center;
+        color: #FF2929;
+        font-family: Pretendard;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 22px; /* 157.143% */
+    `;
+
+    const MyBoard = styled.div`
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.06);
+        border-radius: 14px;
+    `;
+
+    const GoMyBoardBtn = styled.div`
+        display: flex;
+        padding: 16px;
+        align-items: center;
+        gap: 2px;
+        align-self: stretch;
+        border-radius: ${props => props.$position == 'top' ? '14px 14px 0.5px 0' : '0.5px 0 14px 14px'};
+        border: 0px solid rgba(64, 64, 64, 0.14);
+        background: #FFF;
+    `
+
+    const GoBoardBtnText = styled.p`
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1 0 0;color: #404040;
+        text-align: center;
+        font-family: Pretendard;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 22px;
+    `;
+
+    const LogBox = styled.div`
+        
+    `;
+
+    const LogBoxTitle = styled.p`
+        color: #404040;
+        font-family: Pretendard;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 22px; 
+    `
+
+    const LogBoxContent = styled.div`
+        display: flex;
+        justify-content: space-around;
+    `;
+
+    const LogBoxReason = styled.p`
+        flex: 1 1 0;
+        color: rgba(64, 64, 64, 0.64);
+        font-family: Pretendard;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 22px;
+    `
+
+    const LogBoxDate = styled.p`
+        color: rgba(64, 64, 64, 0.64);
+        font-family: Pretendard;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 22px;
+    `;
+
+    export default function Mypage() {
+        const navigate = useNavigate();
+        const [data, setData] = useState(null)
+        const [stuDetails, setStuDetails] = useState(null);
+        const [scoreDetail, setScoreDetail] = useState(false);
+        const [meritlogs, setMeritlogs] = useState(null);
+        const { isTeacher, loading } = useContext(UserContext);
+        const SERVER_URL = import.meta.env.VITE_SERVER_URL
+
+        useEffect(() => {
+            async function fecthData() {
+                const response = await fetch(`${SERVER_URL}/api/profile`, {
                     method: 'GET',
                     credentials: 'include'
                 })
                 const temp = await response.json()
-                if (response.ok) {
-                    navigate('/login')
+                if (!response.ok) {
+                    alert("로그인이 필요합니다.")
+                    navigate("/login")
                 }
-                console.log(temp);
+                // console.log(temp);
+                if (!isTeacher) { setStuDetails(temp.data.stu_details); }
                 setData(temp.data);
             }
-            logout();
+            fecthData();
+        }, []);
+
+        useEffect(() => {
+            async function fecthData() {
+                const response = await fetch(`${SERVER_URL}/api/meritlogs`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                const temp = await response.json()
+                // console.log(temp);
+                setMeritlogs(temp.data);
+            }
+            if (!isTeacher) fecthData();
+        }, []);
+
+        const logoutHandler = () => {
+            if (confirm("정말 로그아웃하시겠습니까?")) {
+                async function logout() {
+                    const response = await fetch(`${SERVER_URL}/api/auth/logout`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    })
+                    const temp = await response.json()
+                    if (response.ok) {
+                        navigate('/login')
+                    }
+                    // console.log(temp);
+                    setData(temp.data);
+                }
+                logout();
+            }
         }
+
+        // console.log(isTeacher);
+        if (loading) return null;
+
+        return (
+            <Container>
+                <Header />
+                {data && <Main>
+                    <UserInfoContainer>
+                        <UserProfile>
+                            <UserProfileImg src={data.profile_img} />
+                        </UserProfile>
+                        <UserInfoBox>
+                            <UserInfo>
+                                <UserName>{isTeacher ? `${data.name} 선생님` : `${data.name}`}</UserName>
+                                {!isTeacher && <UserRoom>{stuDetails.room}호</UserRoom>}
+                            </UserInfo>
+                            <UserInfo>
+                                <UserSchool>미림마이스터고등학교 {!isTeacher && stuNumToGradeANDClass(stuDetails.stu_num)}</UserSchool>
+                            </UserInfo>
+                        </UserInfoBox>
+                    </UserInfoContainer>
+                    {!isTeacher && <UserScoreBox>
+                        <PlusMinusScore>
+                            <ScoreInnerBox $background="#48BFA2">
+                                <InnerBox $justify="start">
+                                    <ScoreBoxText $color="#fff" $size="18">상점</ScoreBoxText>
+                                </InnerBox>
+                                <InnerBox $justify="end">
+                                    <ScoreBoxText $color="#fff" $size="24">{stuDetails.plus_score}점</ScoreBoxText>
+                                </InnerBox>
+                            </ScoreInnerBox>
+                            <ScoreInnerBox $background="#fff">
+                                <InnerBox $justify="start">
+                                    <ScoreBoxText $color="#48BFA2" $size="18">벌점</ScoreBoxText>
+                                </InnerBox>
+                                <InnerBox $justify="end">
+                                    <ScoreBoxText $color="#48BFA2" $size="24">{stuDetails.minus_score}점</ScoreBoxText>
+                                </InnerBox>
+                            </ScoreInnerBox>
+                        </PlusMinusScore>
+                        <TotalScoreContainer onClick={() => { setScoreDetail(!scoreDetail) }}>
+                            <TotalScoreBox>
+                                <TotalScoreText>
+                                    총 상점 {stuDetails.plus_score - stuDetails.minus_score}점
+                                </TotalScoreText>
+                                <TotalScoreDatailBtn>
+                                    <GoDatailText>{scoreDetail ? '상벌점 내역 숨기기' : '상벌점 내역 보기'}</GoDatailText>
+                                    <GoDetailIcon $rotate={scoreDetail}>
+                                        <ArrowIcon />
+                                    </GoDetailIcon>
+                                </TotalScoreDatailBtn>
+                            </TotalScoreBox>
+                            <ScoreHistoryBox $isOpen={scoreDetail}>
+                            {scoreDetail && meritlogs.map((item, idx) => {
+                                return (
+                                    <LogBox key={idx}>
+                                        <LogBoxTitle>{item.log_type} {item.score}점</LogBoxTitle>
+                                        <LogBoxContent>
+                                            <LogBoxReason>{item.reason}</LogBoxReason>
+                                            <LogBoxDate>{dateAndDay(new Date(item.created_at))}</LogBoxDate>
+                                        </LogBoxContent>
+                                    </LogBox>
+                                )
+                            })}
+                            </ScoreHistoryBox>
+                        </TotalScoreContainer>
+                    </UserScoreBox>}
+                    {!isTeacher && <MyBoard>
+                        <GoMyBoardBtn $position='top'>
+                            <GoBoardBtnText>내가 쓴 글 보기</GoBoardBtnText>
+                            <GoMyBoardIcon />
+                        </GoMyBoardBtn>
+                        <GoMyBoardBtn $position='bottom'>
+                            <GoBoardBtnText>1대1 문의 내역 확인</GoBoardBtnText>
+                            <GoMyBoardIcon />
+                        </GoMyBoardBtn>
+                    </MyBoard>}
+                    <LogoutBtn onClick={() => logoutHandler()}>
+                        <LogoutBtnText>로그아웃</LogoutBtnText>
+                    </LogoutBtn>
+                </Main>}
+                <Navigation idx={4} />
+            </Container>
+        )
     }
-
-    // console.log(isTeacher);
-    if (loading) return null;
-
-    return (
-        <Container>
-            <Header />
-            {data && <Main>
-                <UserInfoContainer>
-                    <UserProfile>
-                        <UserProfileImg src={data.profile_img} />
-                    </UserProfile>
-                    <UserInfoBox>
-                        <UserInfo>
-                            <UserName>{isTeacher ? `${data.name} 선생님` : `${data.name}`}</UserName>
-                            {!isTeacher && <UserRoom>{stuDetails.room}호</UserRoom>}
-                        </UserInfo>
-                        <UserInfo>
-                            <UserSchool>미림마이스터고등학교 {!isTeacher && stuNumToGradeANDClass(stuDetails.stu_num)}</UserSchool>
-                        </UserInfo>
-                    </UserInfoBox>
-                </UserInfoContainer>
-                {!isTeacher && <UserScoreBox>
-                    <PlusMinusScore>
-                        <ScoreInnerBox $background="#48BFA2">
-                            <InnerBox $justify="start">
-                                <ScoreBoxText $color="#fff" $size="18">상점</ScoreBoxText>
-                            </InnerBox>
-                            <InnerBox $justify="end">
-                                <ScoreBoxText $color="#fff" $size="24">{stuDetails.plus_score}점</ScoreBoxText>
-                            </InnerBox>
-                        </ScoreInnerBox>
-                        <ScoreInnerBox $background="#fff">
-                            <InnerBox $justify="start">
-                                <ScoreBoxText $color="#48BFA2" $size="18">벌점</ScoreBoxText>
-                            </InnerBox>
-                            <InnerBox $justify="end">
-                                <ScoreBoxText $color="#48BFA2" $size="24">{stuDetails.minus_score}점</ScoreBoxText>
-                            </InnerBox>
-                        </ScoreInnerBox>
-                    </PlusMinusScore>
-                    <TotalScoreContainer onClick={() => { setScoreDetail(!scoreDetail) }}>
-                        <TotalScoreBox>
-                            <TotalScoreText>
-                                총 상점 {stuDetails.plus_score - stuDetails.minus_score}점
-                            </TotalScoreText>
-                            <TotalScoreDatailBtn>
-                                <GoDatailText>{scoreDetail ? '상벌점 내역 숨기기' : '상벌점 내역 보기'}</GoDatailText>
-                                <GoDetailIcon $rotate={scoreDetail}>
-                                    <ArrowIcon />
-                                </GoDetailIcon>
-                            </TotalScoreDatailBtn>
-                        </TotalScoreBox>
-                        {scoreDetail && meritlogs.map((item, idx) => {
-                            return (
-                                <LogBox key={idx}>
-                                    <LogBoxTitle>{item.log_type} {item.score}점</LogBoxTitle>
-                                    <LogBoxContent>
-                                        <LogBoxReason>{item.reason}</LogBoxReason>
-                                        <LogBoxDate>{dateAndDay(new Date(item.created_at))}</LogBoxDate>
-                                    </LogBoxContent>
-                                </LogBox>
-                            )
-                        })}
-                    </TotalScoreContainer>
-                </UserScoreBox>}
-                {!isTeacher && <MyBoard>
-                    <GoMyBoardBtn $position='top'>
-                        <GoBoardBtnText>내가 쓴 글 보기</GoBoardBtnText>
-                        <GoMyBoardIcon />
-                    </GoMyBoardBtn>
-                    <GoMyBoardBtn $position='bottom'>
-                        <GoBoardBtnText>1대1 문의 내역 확인</GoBoardBtnText>
-                        <GoMyBoardIcon />
-                    </GoMyBoardBtn>
-                </MyBoard>}
-                <LogoutBtn onClick={() => logoutHandler()}>
-                    <LogoutBtnText>로그아웃</LogoutBtnText>
-                </LogoutBtn>
-            </Main>}
-            <Navigation idx={4} />
-        </Container>
-    )
-}

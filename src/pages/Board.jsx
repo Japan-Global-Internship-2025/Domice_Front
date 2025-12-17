@@ -3,9 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header"
 import Navigation from "../components/Navigation";
-import BoardMain from "./BoardMain";
-import BoardAnonymous from "./BoardPrivate";
 import BoardWriteIcon from "../assets/icon/board_write.svg?react";
+import BoardList from "../components/BoardList";
 
 const Container = styled.div`
     height: 100dvh; 
@@ -83,7 +82,7 @@ export default function Board() {
                 {<SelectMenuLine $left={NavList[navMenu].left} />}
             </Nav>
             <Main>
-                {navMenu == 0 ? <BoardMain /> : <BoardAnonymous />}
+                <BoardList type={navMenu == 0 ? "posts" : "inquires"} title={navMenu == 0 ? "전체 게시판" : "1대1 문의"}/>
                 <BoardWrite onClick={() => {navigate('/board/write')}}>
                     <BoardWriteIcon/>
                 </BoardWrite>
