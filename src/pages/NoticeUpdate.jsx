@@ -11,7 +11,6 @@ export default function NoticeUpdate() {
     const { isTeacher, loading } = useContext(UserContext);
     const [title, setTitle] = useState(null);
     const [selectedTargets, setSelectedTargets] = useState([1, 2, 3]);
-    const [data, setData] = useState();
     const [content, setContent] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
     const grades = ['1학년', '2학년', '3학년'];
@@ -29,8 +28,10 @@ export default function NoticeUpdate() {
                 alert("잘못된 요청입니다.")
                 navigate(-1);
             }
-            setData(temp.data);
+            setTitle(temp.data.title);
+            setContent(temp.data.content);
             const targets = temp.data.target.split(", ").map(n => Number(n));
+            setSelectedTargets(targets);
             console.log(targets);
         }
         getNoticeData();
@@ -40,7 +41,7 @@ export default function NoticeUpdate() {
         const data = {
             title: title,
             content: content,
-            target_grades: selectedTargets.sort()
+            target: selectedTargets.sort().join(', ')
         }
         console.log(data);
         async function submitData() {
@@ -85,11 +86,11 @@ export default function NoticeUpdate() {
         <Container>
             <Header />
             <BoardInNav title={"수정하기"} />
-            {data && <Main>
+            {(selectedTargets && title && content) && <Main>
                 <FormBox>
-                    <InputTitle type="text" placeholder="제목" onChange={(e) => { setTitle(e.target.value) }} value={data.title} />
+                    <InputTitle type="text" placeholder="제목" onChange={(e) => { setTitle(e.target.value) }} value={title} />
                     <Line />
-                    <InputContent placeholder="내용" onChange={(e) => { setContent(e.target.value) }} value={data.content} />
+                    <InputContent placeholder="내용" onChange={(e) => { setContent(e.target.value) }} value={content} />
                 </FormBox>
                 <TargetBox>
                     <TargetLabel>공개범위</TargetLabel>
