@@ -20,10 +20,7 @@ export const UserProvider = ({ children }) => {
         });
         const result = await response.json()
         setUser(result.data.data);
-        if (response.ok) {
-          alert("정보 가져옴")
-        }
-        else if (response.status == 401) {
+        if (response.status == 401) {
           alert('토큰 에러')
         }
         else if (response.status == 403) {
