@@ -18,7 +18,8 @@ export const UserProvider = ({ children }) => {
           method: 'GET',
           credentials: 'include'
         });
-        setUser(response.data.data);
+        const result = await response.json()
+        setUser(result.data.data);
         if (response.ok) {
           alert("정보 가져옴")
         }
