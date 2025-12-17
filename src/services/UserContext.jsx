@@ -29,6 +29,7 @@ export const UserProvider = ({ children }) => {
           alert('권한 에러')
         }
       } catch (error) {
+        alert('로그인 필요!')
         console.log("로그인 안 된 상태거나 에러 발생");
         navigate('/login');
         setUser(null);
