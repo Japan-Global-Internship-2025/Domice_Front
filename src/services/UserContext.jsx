@@ -14,20 +14,11 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${SERVER_URL}/api/auth/me`, {
-          method: 'GET',
-          credentials: 'include'
+        const response = await axios.get(`${SERVER_URL}/api/auth/me`, {
+          withCredentials: true,
         });
-        const result = await response.json()
-        setUser(result.data.data);
-        if (response.status == 401) {
-          alert('토큰 에러')
-        }
-        else if (response.status == 403) {
-          alert('권한 에러')
-        }
+        setUser(response.data.data);
       } catch (error) {
-        alert('로그인 필요!')
         console.log("로그인 안 된 상태거나 에러 발생");
         navigate('/login');
         setUser(null);
