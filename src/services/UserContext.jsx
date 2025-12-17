@@ -18,6 +18,18 @@ export const UserProvider = ({ children }) => {
           withCredentials: true,
         });
         setUser(response.data.data);
+        if (response.ok) {
+          alert("정보 가져옴")
+        }
+        else if (response.status == 401) {
+          alert('토큰 에러')
+        }
+        else if (response.status == 403) {
+          alert('권한 에러')
+        }
+        else {
+          alert('다른 에러...')
+        }
       } catch (error) {
         console.log("로그인 안 된 상태거나 에러 발생");
         navigate('/login');
