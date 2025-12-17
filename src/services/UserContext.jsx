@@ -18,6 +18,7 @@ export const UserProvider = ({ children }) => {
           withCredentials: true,
         });
         setUser(response.data.data);
+        console.log(response.data)
       } catch (error) {
         console.log("로그인 안 된 상태거나 에러 발생");
         navigate('/login');
