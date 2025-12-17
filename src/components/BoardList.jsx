@@ -139,7 +139,7 @@ export default function BoardList(props) {
     }, [type, orderby])
 
     const handlerBoardDelete = (id) => {
-        const check = confirm(`${id}번\n정말 삭제하시겠습니까?`);
+        const check = confirm(`정말 삭제하시겠습니까?`);
         if (check) {
             async function deletePost() {
                 const response = await fetch(`${SERVER_URL}/api/${type}/${id}`, {

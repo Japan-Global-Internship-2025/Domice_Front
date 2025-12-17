@@ -36,16 +36,15 @@ export default function NoticeUpdate() {
         getNoticeData();
     }, [isTeacher, navigate])
 
-    function updateNoticeService(type, is_secret = null) {
+    function updateNoticeService() {
         const data = {
             title: title,
             content: content,
-            target_grades: selectedTargets
+            target_grades: selectedTargets.sort()
         }
-        if (is_secret) data.is_secret = is_secret;
         console.log(data);
         async function submitData() {
-            const response = await fetch(`${SERVER_URL}/api/${type}`, {
+            const response = await fetch(`${SERVER_URL}/api/notices/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,22 +54,20 @@ export default function NoticeUpdate() {
             })
             if (response.ok) {
                 alert("수정 성공!")
-                navigate("/board");
+                navigate("/notice");
             }
         }
         submitData();
     }
 
     const submitNotice = () => {
-        updateNoticeService('notice')
+        updateNoticeService(`notice/${id}`);
     }
 
     const toggleTarget = (grade) => {
         if (selectedTargets.includes(grade)) {
-            // 이미 선택되어 있으면 제거
             setSelectedTargets(selectedTargets.filter((g) => g !== grade));
         } else {
-            // 선택 안 되어 있으면 추가
             setSelectedTargets([...selectedTargets, grade]);
         }
     };
