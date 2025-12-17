@@ -145,7 +145,7 @@ export default function NoticeWrite(props) {
         const data = {
             title: title,
             content: content,
-            target_grades: selectedTargets.join(', ')
+            target_grades: selectedTargets.sort().join(', ')
         }
         if (is_secret) data.is_secret = is_secret;
         console.log(data);

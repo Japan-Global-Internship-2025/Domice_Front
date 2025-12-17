@@ -16,7 +16,7 @@ export default function Header() {
     const navigate = useNavigate();
     return (
         <Container>
-            <Logo src="/images/logo_white.png" onClick={() => navigate("/home")} />
+            <Logo src="/images/logo_white.png" onClick={() => navigate("/")} />
         </Container>
     );
 }

@@ -11,7 +11,6 @@ export default function NoticeUpdate() {
     const { isTeacher, loading } = useContext(UserContext);
     const [title, setTitle] = useState(null);
     const [selectedTargets, setSelectedTargets] = useState([1, 2, 3]);
-    const [data, setData] = useState();
     const [content, setContent] = useState(null);
     const SERVER_URL = import.meta.env.VITE_SERVER_URL
     const grades = ['1학년', '2학년', '3학년'];
@@ -29,23 +28,24 @@ export default function NoticeUpdate() {
                 alert("잘못된 요청입니다.")
                 navigate(-1);
             }
-            setData(temp.data);
+            setTitle(temp.data.title);
+            setContent(temp.data.content);
             const targets = temp.data.target.split(", ").map(n => Number(n));
+            setSelectedTargets(targets);
             console.log(targets);
         }
         getNoticeData();
     }, [isTeacher, navigate])
 
-    function updateNoticeService(type, is_secret = null) {
+    function updateNoticeService() {
         const data = {
             title: title,
             content: content,
-            target_grades: selectedTargets
+            target: selectedTargets.sort().join(', ')
         }
-        if (is_secret) data.is_secret = is_secret;
         console.log(data);
         async function submitData() {
-            const response = await fetch(`${SERVER_URL}/api/${type}`, {
+            const response = await fetch(`${SERVER_URL}/api/notices/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -55,22 +55,20 @@ export default function NoticeUpdate() {
             })
             if (response.ok) {
                 alert("수정 성공!")
-                navigate("/board");
+                navigate("/notice");
             }
         }
         submitData();
     }
 
     const submitNotice = () => {
-        updateNoticeService('notice')
+        updateNoticeService(`notice/${id}`);
     }
 
     const toggleTarget = (grade) => {
         if (selectedTargets.includes(grade)) {
-            // 이미 선택되어 있으면 제거
             setSelectedTargets(selectedTargets.filter((g) => g !== grade));
         } else {
-            // 선택 안 되어 있으면 추가
             setSelectedTargets([...selectedTargets, grade]);
         }
     };
@@ -88,11 +86,11 @@ export default function NoticeUpdate() {
         <Container>
             <Header />
             <BoardInNav title={"수정하기"} />
-            {data && <Main>
+            {(selectedTargets && title && content) && <Main>
                 <FormBox>
-                    <InputTitle type="text" placeholder="제목" onChange={(e) => { setTitle(e.target.value) }} value={data.title} />
+                    <InputTitle type="text" placeholder="제목" onChange={(e) => { setTitle(e.target.value) }} value={title} />
                     <Line />
-                    <InputContent placeholder="내용" onChange={(e) => { setContent(e.target.value) }} value={data.content} />
+                    <InputContent placeholder="내용" onChange={(e) => { setContent(e.target.value) }} value={content} />
                 </FormBox>
                 <TargetBox>
                     <TargetLabel>공개범위</TargetLabel>
